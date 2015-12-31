@@ -1,0 +1,279 @@
+#+TITLE: Linux Hax
+#+AUTHOR: Felix Brilej
+
+
+* THE GOLDEN RULES
+  #+BEGIN_QUOTE
+  Check your firewall
+  Do you use sudo and therefor have different runtime variables (or a different
+  environment)? This couldn't be confirmed by my collegues
+  Check if the logfile is readable if you get no Feedback at all
+  #+END_QUOTE
+* SLES
+** Eth0 configuration after vmware clone
+   vim /etc/udev/rules.d/70-persistent-net.rules
+   be carefull when more than one adapter is present. otherwise:
+   delete the first block and change the last word in the second block to from eth1 eth0
+
+* Oracle Linux
+** eth0 doesn't exist
+   rm /etc/udev/rules.d/70-persistent-net.rules reboot (falls der network device danach immer noch
+   eth1 heißt: in /etc/udev/rules.d/70-persistent-net.rules den device name auf eth0 ändern und
+   erneut rebooten)
+
+** Change the computer name
+   /etc/sysconfig/network /etc/hosts
+** Tastaturlayout ändern:
+   /etc/sysconfig/keyboard ändern in “de”
+
+* MySQL
+** What to do when you cant start mysql as root:
+   service mysqld stop /usr/bin/ mysqld start --skip-grant-tables -user=root mysql -u root mysql >
+   UPDATE mysql.user SET Password=PASSWORD('newpwd') WHERE User='root'; mysql > FLUSH PRIVILEGES;
+
+** What to do when your mysql wont start generally:
+   service mysqld stop mv /var/lib/mysql/mysql.sock /var/lib/mysql/mysql.sock.bak service mysqld
+   start
+** Mysql Passwort ändern:
+   mysqladmin -u root -p'abc' password '123456'
+** Wichtige Befehle
+   - show databases;
+   - use testdatabase;
+   - show tables;
+   - describe testtable; (to show columns)
+* RPM
+** Check whether a folder belongs to a package:
+Rpm –q –whatprovides /etc/profile
+
+** Alle installierten packages:
+Rpm –qa | less
+
+** Ein bestimmtes package suchen:
+Rpm –qa | grep –i name
+
+* Proxy settings
+** Proxy information that works with cpan:
+   o conf init /proxy/ o conf commit
+   http://172.16.8.250:3128
+
+** Proxy for git
+   git config --global http.proxy http://172.16.8.250:3128; git config --global https.proxy  http://172.16.8.250:3128
+
+* Git
+** Undo last commit
+   [2015-03-26 Thu 11:35]
+
+#+BEGIN_SRC sh
+  git commit ....  git reset --soft HEAD~1
+  # edit files as needed
+  git add ...  git commit -c ORIG_HEAD
+#+END_SRC
+
+if your commit is total crap:
+
+#+BEGIN_SRC sh
+  git reset --hard HEAD~1
+#+END_SRC
+
+** Line Endings
+   Überlasst mir als user komplett die Datei-Endungs-Konvertierungen
+   git config --global core.autocrlf false
+** Clone Subdir
+   #+BEGIN_QUOTE
+   Suppose your project is in a dir called project, and you want only those commits which touch project/dirB.
+
+   Then:
+
+   git clone project/ subproject/
+   cd subproject
+   git filter-branch --prune-empty --subdirectory-filter dirB HEAD
+
+   subproject will now contain the git history which touches dirB.
+   #+END_QUOTE
+
+* Mailing
+** Postfix
+*** main.cf / Wofür steht masquerade_domain bei postfix?
+    Für eine Empfänger-Adressen umschreib-Logik.
+
+    masquerade_domains = foo.example.com example.com
+    strips "user@any.thing.foo.example.com" to "user@foo.example.com", but strips "user@any.thing.else.example.com" to "user@example.com".
+** Fetchmail
+*** Zertifikaten-Kette anzeigen lassen
+    openssl s_client -connect pop.gmx.net:995 -showcerts
+    - das angezeigte Zertifikat muss von BEGIN bis END als .pem file angelegt werden
+    - anschließend muss über die datei ein c_rehash ausgeführt werden
+    - wird auf das Oberverzeichnis über ~ssl sslcertck sslcertpath /home/rtracker/.fetchmail/certs~
+      verwiesen kommt es nicht mehr zum Fehler eines unbekannten Zertifikates beim Abholen der Mails
+*** Convert a .cer into a .pem file
+    openssl x509 -inform der -in certificate.cer -out certificate.pem
+* Ubuntu
+** Fenster verschieben
+   strg windows pfeil
+** Ubuntu repository
+   vim /etc/apt/sources.list
+** Ubuntu enable root login
+   sudo passwd root sudo passwd -u root
+* SSH
+** Passwortlosen Login über ssh-key von einem auf das andere System realisieren
+   1) ssh root@alpha
+      1) passwort eingeben
+   2) ssh-keygen -t rsa -P '' -f ~/.ssh/id_dsa
+   3) ssh-copy-id -i ~/.ssh/id_dsa.pub root@omega
+   4) ssh root@omega (zum testen)
+** Enable / Disable remote root access:
+   falls kein root-passwort gesetzt ist
+   sudo passwd root sudo passwd -u root Reverting that back: sudo passwd -l root
+
+   falls der root-login von remote verboten ist
+   in /etc/ssh/sshd_config: # PermitRootLogin yes, danach den ssh daemon neustarten
+** mpssh
+   Auf mehreren PCs gleichzeitig einen Bash-Befehl ausführen
+   mpssh -f ~/banks.txt -v "uptime"
+** Emacs
+   Damit emacs den ssh-key benutzt muss tatsächlich das folgende ausgeführt werden
+   #+BEGIN_SRC sh
+   ssh-add ~/.ssh/*private
+   #+END_SRC
+
+   #+RESULTS:
+* vSphere
+** VM Plattenplatz erhöhen
+   1) Vor Plattenplatzerweiterung nach Rücksprache Snapshots löschen
+   2) Den neuen platz als Primary Partition hinzufügen über den Befehl fdisk
+   3) Über system-config-lvm die Partition zum LVM hinzufügen
+      1) Hinweis: über X-Server, yum install system-config-lvm
+   4) Lvm Größe auf die maximal mögliche erhöhen
+* Basics
+** Change hostname 								     :Ubuntu:
+   - /etc/hosts (fqdn, then shorthostname, seperated via tab)
+   - /etc/hostname (short hostname)
+** Change hostname 								     :CentOS:
+   - /etc/sysconfig/network
+     - asd.site
+   - /etc/hosts
+     - ip asd.site asd
+   - hostname asd.site
+   - service network restart
+** chkconfig 									     :Ubuntu:
+   equivalents to these: chkconfig --add <service> chkconfig --level 345 <service> on chkconfig
+   --del <service> are: update-rc.d <service> defaults update-rc.d <service> start 20 3 4 5
+   update-rc.d -f <service> remove
+** /boot Partition full 							     :Ubuntu:
+   fire up this multiple times: sudo apt-get autoremove
+** How to mount a cd:
+mount -t iso9660 /dev/scd0 /media/cdrom/
+
+** Find out File Size, Disk size
+   ncdu
+** Search through bash history
+   history | grep asd
+** Only download packages via yum
+   yum install yum-downloadonly yum install --downloadonly --downloaddir=<directory> <package>
+
+** In allen Dateien in einem Unterordner alle “sqlplus” in “sqlplus64” ändern:
+find -type f -exec sed -i -e 's/sqlplus/sqlplus64/g' {} \;
+
+** Logrotate
+   Beispiel von AGerler:
+   #+BEGIN_VERSE
+   cat /etc/logrotate.d/fetchmail
+   /var/log/fetchmail.log {
+
+   weekly
+   create 0644 rtracker adm
+   rotate 4
+   compress
+
+   delaycompress
+   }
+   #+END_VERSE
+   - weekly: zeitintervall
+   - create: chmod parameter, owner und group
+   - rotate: anzahl an "rotates" welche ein logfile bestehen bleibt bevor es gelöscht wird
+   - compress: ob ein log gezipt wird oder nicht
+   - delaycompress: das log wird erst nach der rotation compressed (file-handle-gründe)
+** Search through log with Grep and a regular expression (regexp)
+   grep -iE "(warning|error|critical)" /var/log/fetchmail.log.1
+** Change hostname color in commandline:
+export PS1="\e[0;31m[\u@\h \W]\$ \e[m "
+
+** Change the default apache/httpd webpage
+cd /var/wwww/html; touch index.html; service httpd restart
+
+** Show all files in the current directory, including hidden files
+ls -a | head
+
+** Create an alias:
+vi /root/.bashrc or vi /home/SOMEUSER/.bashrc alias keyword='target'
+
+** Show all processes that run under the user dermalog:
+ps -ef | grep dermalog
+
+** Change timezone:
+cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+
+** Open process in background:
+firefox & disown
+
+** Unpack a .tar.gz file
+tar -xvzf datei.tar.gz (-x extract, -v verbose output, -f file to be unpacked, -z erst gzip, dann
+tar)
+
+** Screen session quiting
+screen -X -S <session-id> kill
+
+** Windows lineendings to unix lineendings
+   in vim: set ff=unix
+
+** Search for string in a directory
+   grep -R 'string' dir/
+
+** Rsync
+   rsync -avz ursprung root@192.168.0.1:/ziel/
+
+** Search for a package with apt-get
+apt-cache search <package_name>
+
+** Install cpan modules with dependencies
+perl -MCPAN -e 'my $c = "CPAN::HandleConfig"; $c->load(doit => 1, autoconfig => 1);
+$c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes");
+$c->commit'
+
+** Monitor a process that times out
+   strace -f pid-file (child-threads followen) (not confirmed) Short of that, you can always look
+   in the process init script. For instance, the SSH daemon is started with the script in
+   /etc/init.d/sshd. Sometimes the PID will be defined there (search for pid, PID, PIDFILE,
+   PID_FILE, etc.).  For anything that sources /etc/init.d/functions, the PID will live in
+   /var/run/*.pid.
+** PC auf offene Ports überprüfen
+   nmap, wichtig ist das von einem komplett seperaten System zu machen
+** PS1 Config
+   /bin/bash commandline setting (in ~/.bashrc eintragen):
+   export PS1='\[\033[33m\]\u@\H:\w \[\033[m\]'
+** Cronjobs
+   Achtung! Cronjobs starten jede Minute neu und senden entsprechende report-Mails an verschiedene
+   User sollte es bei der Ausführung einen Fehler gegeben haben
+*** logging anschalten
+    59 23 * * * /home/john/bin/backup.sh > /home/john/logs/backup.log 2>&1
+* Configs resetten
+  Mit AT einstellen in 10 Minuten ne config zu resetten (AT-Jobs)
+  Bei Ipconfigs oder Firewall-configs einen AT job einstellen der das System im Fehlerfall wieder
+  verfügbar macht
+* /bin/bash
+** Colors
+   Black       0;30     Dark Gray     1;30
+   Blue        0;34     Light Blue    1;34
+   Green       0;32     Light Green   1;32
+   Cyan        0;36     Light Cyan    1;36
+   Red         0;31     Light Red     1;31
+   Purple      0;35     Light Purple  1;35
+   Brown       0;33     Yellow        1;33
+   Light Gray  0;37     White         1;37
+** Colorful motd (in red)
+   Andere motds kommen aus ~/etc/update-motd/~
+#+BEGIN_SRC
+   echo -en "\033[1;34m" > /etc/motd
+   echo "Text of your motd file....." >> /etc/motd
+   echo -en "\033[0m" >> /etc/motd
+#+END_SRC
