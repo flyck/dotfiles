@@ -1,0 +1,40 @@
+#+Title:     Vim Cheatsheet
+#+Author:    Felix Brilej
+#+Options:   toc:nil
+#+HTML_HEAD: <link href="bootstrap.css" rel="stylesheet">
+
+
+* Allgemeine Kommandos
+
+| Kommando    | Beschreibung                                     |
+|-------------+--------------------------------------------------|
+| hjkl        | Navigation um eine Stelle nach rechts oder links |
+| x           | Lösche Zeichen an aktueller Stell                |
+| A           | Gehe nach dem Cursor-Symbol in den Insert-mode   |
+| C-c         | Aus dem Insert-Mode herauskommen                 |
+| :e filename | Eine neue Datei editieren                        |
+| gf          | Den Pfad unter dem Cursor zum Editieren öffnen   |
+| zz          | Bildschirm auf Cursor zentrieren                 |
+| S-zz        | Die Datei speichern und vim schließen            |
+|-------------+--------------------------------------------------|
+| C-w v       | Den Bildschirm vertikal splitten                 |
+| C-w s       | Den Bildschirm horizontal splitten               |
+| C-w q       | Das aktuelle Window schließen                    |
+| C-w C-w     | Zum nächsten Window wechseln                     |
+| C-w arrow   | Zum Window in Pfeilrichtung wechseln             |
+|-------------+--------------------------------------------------|
+
+* Meine eigenen Kommandos aus .vimrc
+
+| Kommando | Beschreibung                                 |
+|----------+----------------------------------------------|
+| M-p      | Aktuelle Zeile mit vorherigen Zeile tauschen |
+| M-n      | Aktuelle Zeile mit nächster Zeile tauschen   |
+
+* Techniken
+  - Einen Bereich ein / auskommentieren
+    1. An den Anfang scrollen
+    2. C-V (in den Visual Mode gehen)
+    3. Ans Ende scrollen
+    4. S-I # C-c
+    5. Einen Moment warten

@@ -1,46 +1,49 @@
-#+TITLE: Linux Hax
+#+TITLE:  Linux Hax
 #+AUTHOR: Felix Brilej
 
 
 * THE GOLDEN RULES
-  #+BEGIN_QUOTE
-  Check your firewall
-  Do you use sudo and therefor have different runtime variables (or a different
-  environment)? This couldn't be confirmed by my collegues
-  Check if the logfile is readable if you get no Feedback at all
-  #+END_QUOTE
-* SLES
-** Eth0 configuration after vmware clone
-   vim /etc/udev/rules.d/70-persistent-net.rules
-   be carefull when more than one adapter is present. otherwise:
-   delete the first block and change the last word in the second block to from eth1 eth0
-
+  :Properties:
+  :Visibility: children
+  :End:
+  - Check your firewall
+  - Do you use sudo and therefor have different runtime variables (or a different environment)?
+    This couldn't be confirmed by my colleagues :/
+  - Check if the logfile is readable if you get no Feedback at all
 * Oracle Linux
-** eth0 doesn't exist
-   rm /etc/udev/rules.d/70-persistent-net.rules reboot (falls der network device danach immer noch
-   eth1 heißt: in /etc/udev/rules.d/70-persistent-net.rules den device name auf eth0 ändern und
-   erneut rebooten)
-
 ** Change the computer name
    /etc/sysconfig/network /etc/hosts
 ** Tastaturlayout ändern:
    /etc/sysconfig/keyboard ändern in “de”
 
 * MySQL
-** What to do when you cant start mysql as root:
-   service mysqld stop /usr/bin/ mysqld start --skip-grant-tables -user=root mysql -u root mysql >
-   UPDATE mysql.user SET Password=PASSWORD('newpwd') WHERE User='root'; mysql > FLUSH PRIVILEGES;
+** What to do when you cant start mysql as root
+   Maybe not exactly right
+   #+BEGIN_SRC sh
+     service mysqld stop
+     /usr/bin/mysqld start --skip-grant-tables -user=root
+     mysql -u root > UPDATE mysql.user SET Password=PASSWORD('newpwd') WHERE User='root'; mysql > FLUSH PRIVILEGES;
+   #+END_SRC
 
-** What to do when your mysql wont start generally:
-   service mysqld stop mv /var/lib/mysql/mysql.sock /var/lib/mysql/mysql.sock.bak service mysqld
-   start
-** Mysql Passwort ändern:
+
+** What to do when your mysql wont start generally
+   #+BEGIN_SRC sh
+   service mysqld stop
+   mv /var/lib/mysql/mysql.sock /var/lib/mysql/mysql.sock.bak
+   service mysqld start
+   #+END_SRC
+
+** Mysql Passwort ändern
    mysqladmin -u root -p'abc' password '123456'
 ** Wichtige Befehle
-   - show databases;
-   - use testdatabase;
-   - show tables;
-   - describe testtable; (to show columns)
+   #+BEGIN_SRC sql
+   show databases;
+   use testdatabase; --enables you to query the selected database
+   show tables;
+   describe testtable; --show available columns / attributes
+   select * from testtable where id=1\G --display columns nicely; for tables with many columns
+   #+END_SRC
+
 * RPM
 ** Check whether a folder belongs to a package:
 Rpm –q –whatprovides /etc/profile
@@ -52,14 +55,34 @@ Rpm –qa | less
 Rpm –qa | grep –i name
 
 * Proxy settings
-** Proxy information that works with cpan:
-   o conf init /proxy/ o conf commit
+** Setup proxy information that works with cpan
+   #+BEGIN_SRC
+   perl -MCPAN -e shell
+   o conf init /proxy/
    http://172.16.8.250:3128
+   o conf commit
+   exit
+   #+END_SRC
 
 ** Proxy for git
    git config --global http.proxy http://172.16.8.250:3128; git config --global https.proxy  http://172.16.8.250:3128
 
 * Git
+** Initial Settings
+   - General information required by git
+   #+BEGIN_SRC sh
+git config --global user.name "Felix Brilej"
+git config --global user.email felix.brilej@dermalog.com
+   #+END_SRC
+   - Install ssh key
+   #+BEGIN_SRC sh
+   # check if ssh-agent is running
+   ps -e | grep [s]sh-agent
+   # start the ssh-agent if it's not running
+   ssh-agent /bin/bash
+   # Unlock the ssh key
+   ssh-add ~/.ssh/id_rsa.pub
+   #+END_SRC
 ** Undo last commit
    [2015-03-26 Thu 11:35]
 
@@ -78,6 +101,7 @@ if your commit is total crap:
 ** Line Endings
    Überlasst mir als user komplett die Datei-Endungs-Konvertierungen
    git config --global core.autocrlf false
+*** TODO Hier hatte ich doch eine bessere Lösung
 ** Clone Subdir
    #+BEGIN_QUOTE
    Suppose your project is in a dir called project, and you want only those commits which touch project/dirB.
@@ -90,7 +114,6 @@ if your commit is total crap:
 
    subproject will now contain the git history which touches dirB.
    #+END_QUOTE
-
 * Mailing
 ** Postfix
 *** main.cf / Wofür steht masquerade_domain bei postfix?
@@ -102,9 +125,21 @@ if your commit is total crap:
 *** Zertifikaten-Kette anzeigen lassen
     openssl s_client -connect pop.gmx.net:995 -showcerts
     - das angezeigte Zertifikat muss von BEGIN bis END als .pem file angelegt werden
-    - anschließend muss über die datei ein c_rehash ausgeführt werden
+    - anschließend muss über die datei ein c_rehash (auf die directory) ausgeführt werden
+      #+BEGIN_SRC sh
+      c_rehash .
+      #+END_SRC
     - wird auf das Oberverzeichnis über ~ssl sslcertck sslcertpath /home/rtracker/.fetchmail/certs~
       verwiesen kommt es nicht mehr zum Fehler eines unbekannten Zertifikates beim Abholen der Mails
+**** Alternative für Ubuntu
+     Ich bin mir unsicher welcher Schritt jetzt genau zur Lösung geführt hat
+     - Auch die Dermalog-CA als cert hinzufügen
+     - Beim openssl test die Dermalog-CA direkt als Ca-cert file angeben
+     #+BEGIN_SRC sh
+sudo cp /usr/share/ca-certificates/outlook.dc.dermalog.com.crt /usr/local/share/ca-certificates/
+sudo update-ca-certificates
+openssl s_client -CAfile ~/.fetchmail/certs/DERMALOG-CA012.dermalog.hh.pem -connect 10.120.20.218:995 -showcerts
+     #+END_SRC
 *** Convert a .cer into a .pem file
     openssl x509 -inform der -in certificate.cer -out certificate.pem
 * Ubuntu
@@ -121,12 +156,14 @@ if your commit is total crap:
    2) ssh-keygen -t rsa -P '' -f ~/.ssh/id_dsa
    3) ssh-copy-id -i ~/.ssh/id_dsa.pub root@omega
    4) ssh root@omega (zum testen)
-** Enable / Disable remote root access:
-   falls kein root-passwort gesetzt ist
-   sudo passwd root sudo passwd -u root Reverting that back: sudo passwd -l root
+** Enable / Disable remote root access
+   Set a root password
+   sudo passwd root
+   Reverting that back: sudo passwd -l root
 
-   falls der root-login von remote verboten ist
-   in /etc/ssh/sshd_config: # PermitRootLogin yes, danach den ssh daemon neustarten
+   Allow remote root login:
+   in /etc/ssh/sshd_config: # PermitRootLogin yes
+   service ssh reload
 ** mpssh
    Auf mehreren PCs gleichzeitig einen Bash-Befehl ausführen
    mpssh -f ~/banks.txt -v "uptime"
@@ -135,15 +172,39 @@ if your commit is total crap:
    #+BEGIN_SRC sh
    ssh-add ~/.ssh/*private
    #+END_SRC
-
-   #+RESULTS:
 * vSphere
 ** VM Plattenplatz erhöhen
    1) Vor Plattenplatzerweiterung nach Rücksprache Snapshots löschen
-   2) Den neuen platz als Primary Partition hinzufügen über den Befehl fdisk
-   3) Über system-config-lvm die Partition zum LVM hinzufügen
-      1) Hinweis: über X-Server, yum install system-config-lvm
-   4) Lvm Größe auf die maximal mögliche erhöhen
+   2) Über das vSphere Interface eine neue Harddisk hinzufügen
+   3) Die neue Platte identifizieren (im Zweifelsfall hilft ein reboot)
+      #+BEGIN_SRC sh
+      fdisk -l
+      #+END_SRC
+      Es wird die Platte sein, die keine valide Partition Table enthält
+   4) Die Platte formatieren
+      #+BEGIN_SRC sh
+      fdisk /dev/sdb
+      #+END_SRC
+      es folgt ein interaktiver Dialog
+      - "n" für "neue Partition"
+      - "p" für "primary partition"
+      - "1" für partition number, da wir auf dieser Platte bisher keine Partitionen haben
+      - first cylinder: "enter"
+      - last cylinder: "enter"
+      - "t" to change the partitinos system ID, in this case "1" will be set automatically
+      - Hex Code: 8e for Linux LVM
+      - "w" to write the changes and exit
+   5) Die Änderungen überprüfen mit einem erneuten "fdisk"
+   6) Die formatierte Disk zum LVM hinzufügen
+      Dies geht über die folgenden Befehle:
+      - pvcreate <disk>
+      - vgdisplay
+      - vgextend <volumegroup> <disk>
+      - pvscan
+   7) Die Größe des der LVM Group auf die maximal mögliche Größe erweitern
+      - lvdisplay
+      - lvextend <volumegroup> <disk>
+      - resize2fs <volumegroup>
 * Basics
 ** Change hostname 								     :Ubuntu:
    - /etc/hosts (fqdn, then shorthostname, seperated via tab)
@@ -164,7 +225,12 @@ if your commit is total crap:
 ** How to mount a cd:
 mount -t iso9660 /dev/scd0 /media/cdrom/
 
-** Find out File Size, Disk size
+** Eth0 configuration after vmware clone
+   vim /etc/udev/rules.d/70-persistent-net.rules
+   be carefull when more than one adapter is present. otherwise:
+   delete the first block and change the last word in the second block to from eth1 eth0
+
+** Find out File Size, Disk size, directory Size
    ncdu
 ** Search through bash history
    history | grep asd
@@ -194,10 +260,11 @@ find -type f -exec sed -i -e 's/sqlplus/sqlplus64/g' {} \;
    - compress: ob ein log gezipt wird oder nicht
    - delaycompress: das log wird erst nach der rotation compressed (file-handle-gründe)
 ** Search through log with Grep and a regular expression (regexp)
-   grep -iE "(warning|error|critical)" /var/log/fetchmail.log.1
-** Change hostname color in commandline:
-export PS1="\e[0;31m[\u@\h \W]\$ \e[m "
-
+   grep -iE "(warning|error|critical)" /var/log/fetchmail.log
+** Change hostname color in commandline
+   #+BEGIN_SRC sh
+   export PS1='\[\033[33m\]\u@\H:\w \[\033[m\]'
+   #+END_SRC
 ** Change the default apache/httpd webpage
 cd /var/wwww/html; touch index.html; service httpd restart
 
@@ -277,3 +344,24 @@ $c->commit'
    echo "Text of your motd file....." >> /etc/motd
    echo -en "\033[0m" >> /etc/motd
 #+END_SRC
+* Debugging of Binaries
+  To debug binaries that misbehave and dont give obvious logs try the following:
+  - Look in the system messages log
+    #+BEGIN_SRC sh
+    less /var/log/messages
+    #+END_SRC
+  - Use strace and look out for file permission errors which might cause the binary to stop
+    #+BEGIN_SRC sh
+    strace -pid <PID> -f
+    #+END_SRC
+  - Debug the binary with gdb (u are going pretty deep in here)
+* Port Analysis
+  - Look at opened ports:
+    #+BEGIN_SRC sh
+    netstat -tulpen
+    #+END_SRC
+  - Look at the processes behind them (actually active ports):
+    #+BEGIN_SRC sh
+    # Use a grep filter here because you will be getting way too much
+    netstat -tapen | grep
+    #+END_SRC

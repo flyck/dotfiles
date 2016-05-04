@@ -1,0 +1,12 @@
+#+Title:  TUHH VPN Setup
+#+Author: Felix Penta
+
+* Overview
+  - Get the certificate for eduroam
+  - User VPN as helper for all the exact eduroam connection properties
+  - Use Eduroam
+
+* TODO Make this document
+  CLOCK: [2016-02-28 So 12:01]--[2016-02-28 So 12:23] =>  0:22
+
+* TODO Replace this emacs with a newer version
