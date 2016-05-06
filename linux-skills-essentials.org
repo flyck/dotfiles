@@ -1,0 +1,38 @@
+#+TITLE: Linux System Administration Essentials defined by Linuxfoundationx
+#+DESCRIPTION: Takeing the video course for this at https://www.edx.org/course/linux-system-administration-essentials-linuxfoundationx-lfs201x costs $500
+
+* DONE Edit text files on the command line
+  CLOSED: [2015-07-25 Sa 22:12]
+  vi, vim, emacs
+* DONE Manipulate text files from the command line
+  CLOSED: [2015-07-25 Sa 22:13]
+  awk? brauche ich äußerst selten, ich öffne einfach emacs
+* DONE Archive and compress files and directories
+  CLOSED: [2015-07-25 Sa 22:13]
+  tar -zcvf
+* TODO Assemble partitions as LVM devices
+* TODO Configure swap partitions
+* TODO File attributes
+  dateien sind als inodes sortiert
+* TODO Find files on the filesystem
+  find / -type f -name carlo
+* TODO Format filesystems
+* TODO Mount filesystems automatically at boot time
+* TODO Mount networked filesystems
+* TODO Partition storage devices
+* TODO Troubleshoot filesystem issues
+* TODO Create backups
+* TODO Create local user groups
+* TODO Manage file permissions
+* TODO Manage fstab entries
+* TODO Manage local users accounts
+* TODO Manage the startup process and related services
+* TODO Manage user accounts
+* TODO Manage user account attributes
+* TODO Manage user processes
+* TODO Restore backed up data
+* TODO Set file permissions and ownership
+* TODO Access the root account
+* TODO Use sudo to manage access to the root account
+* TODO Write basic bash shell scripts
+* TODO Install software packages
