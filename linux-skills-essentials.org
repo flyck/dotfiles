@@ -1,9 +1,17 @@
-#+TITLE: Linux System Administration Essentials defined by Linuxfoundationx
-#+DESCRIPTION: Takeing the video course for this at https://www.edx.org/course/linux-system-administration-essentials-linuxfoundationx-lfs201x costs $500
+#+Title:  Linux System Administration Essentials defined by Linuxfoundation
+#+Author: Felix Brilej
+
+The contents of this file are taken from edx.org.
+
+Taking the video course for this at [[https://www.edx.org/course/linux-system-administration-essentials-linuxfoundationx-lfs201x][edx.org essential linux skills]] costs $500. I think i can learn
+this by myself on the run.
+
+Im not completely happy on how this file contains mostly out of headlines.
 
 * DONE Edit text files on the command line
   CLOSED: [2015-07-25 Sa 22:12]
-  vi, vim, emacs
+  - vi, vim, emacs
+  - piping might also considered editing using > or >>
 * DONE Manipulate text files from the command line
   CLOSED: [2015-07-25 Sa 22:13]
   awk? brauche ich äußerst selten, ich öffne einfach emacs
@@ -13,9 +21,12 @@
 * TODO Assemble partitions as LVM devices
 * TODO Configure swap partitions
 * TODO File attributes
-  dateien sind als inodes sortiert
-* TODO Find files on the filesystem
-  find / -type f -name carlo
+  Files are registered as INodes.
+* PENDING Find files on the filesystem
+  - find / -type f -name carlo
+  - find / -iname 'carlo'
+    - How can i use this efficiently?
+  - When are files indexed for search and how can i work with that to search fast?
 * TODO Format filesystems
 * TODO Mount filesystems automatically at boot time
 * TODO Mount networked filesystems
@@ -23,16 +34,38 @@
 * TODO Troubleshoot filesystem issues
 * TODO Create backups
 * TODO Create local user groups
-* TODO Manage file permissions
+* DONE Manage file permissions
+  CLOSED: [2016-05-23 Mo 15:47]
+  Tools to do that:
+  - chmod
+  - chown
+** DONE Set file permissions and ownership
+   CLOSED: [2016-05-23 Mo 15:48]
 * TODO Manage fstab entries
 * TODO Manage local users accounts
 * TODO Manage the startup process and related services
+* DONE Manage user account attributes
+  CLOSED: [2016-05-23 Mo 15:49]
+  edit /etc/passwd
 * TODO Manage user accounts
-* TODO Manage user account attributes
 * TODO Manage user processes
 * TODO Restore backed up data
-* TODO Set file permissions and ownership
-* TODO Access the root account
-* TODO Use sudo to manage access to the root account
-* TODO Write basic bash shell scripts
-* TODO Install software packages
+* DONE Access the root account
+  CLOSED: [2016-05-23 Mo 15:53]
+  - Configure sshd such that it allows remote root access
+  - There is a command on how to reset the root password
+  - There is a way on how to allow users to login as root not using the root password but their
+    ssh keys which allows logging who did what
+    - This is basically the way to go but requires some initial setup and the discipline and
+      knowledge to pull through with it
+* PENDING Use sudo to manage access to the root account
+  The basic usage of sudo is clear.
+
+  Care, with sudo I switch to roots environment variables and might "lose" some local ones. There
+  is cool and detailed knowledge to have about this.
+* DONE Write basic bash shell scripts
+  CLOSED: [2016-05-23 Mo 15:49]
+  I have written plenty of those :D
+* DONE Install software packages
+  CLOSED: [2016-05-23 Mo 15:50]
+  apt-get, yum, cpan, cpanminus, rpm, tell me about it
