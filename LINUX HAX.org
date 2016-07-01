@@ -13,8 +13,31 @@
 * Oracle Linux
 ** Change the computer name
    /etc/sysconfig/network /etc/hosts
-** Tastaturlayout ändern:
-   /etc/sysconfig/keyboard ändern in “de”
+** Add a repository
+   For CentOS and Red Hat Enterprise Linux 6.x:
+   #+BEGIN_SRC sh
+   #Centos extras repository (contains for example nrpe checks)
+   sudo wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+   sudo rpm -Uvh epel-release-latest-6*.rpm
+   #+END_SRC
+
+   For Oracle Linux 6.x:
+   #+BEGIN_SRC sh
+     cd /etc/yum.repos.d/
+     wget http://public-yum.oracle.com/public-yum-ol6.repo
+   #+END_SRC
+
+   If this happens:
+   #+BEGIN_QUOTE
+   Error: Cannot retrieve metalink for repository: epel. Please verify its path and try again
+   #+END_QUOTE
+   Maybe it is because of old certificates. An alternative would be to use repositorise with only
+   http and not https. However, sticking with https, try:
+   #+BEGIN_SRC sh
+   yum --disablerepo=epel -y update  ca-certificates
+   #+END_SRC
+** Change keyboard layout
+   /etc/sysconfig/keyboard change good looking entries into “de”
 
 * MySQL
 ** What to do when you cant start mysql as root
@@ -45,14 +68,22 @@
    #+END_SRC
 
 * RPM
-** Check whether a folder belongs to a package:
-Rpm –q –whatprovides /etc/profile
+  Differences in software architectures:
+  - x86-64: Initial description for 64-bit architecture
+  - amd64 : x86-64 for amd or intel processors (basically just a new name for the same thing)
+  - i386  : 32 bit architecture
 
-** Alle installierten packages:
-Rpm –qa | less
-
-** Ein bestimmtes package suchen:
-Rpm –qa | grep –i name
+  Some usefull hacks
+  #+BEGIN_SRC sh
+    #Check whether a folder belongs to a package
+    rpm -q -whatprovides /etc/profile
+    #List all installed packages
+    rpm -qa | less
+    #Search for a specific package
+    rpm -qa | grep -i name
+    #Uninstall a package
+    rpm -e name
+  #+END_SRC
 
 * Proxy settings
 ** Setup proxy information that works with cpan
@@ -67,21 +98,30 @@ Rpm –qa | grep –i name
 ** Proxy for git
    git config --global http.proxy http://172.16.8.250:3128; git config --global https.proxy  http://172.16.8.250:3128
 
+** Proxy in bash
+   Just add the following to the end of you bashrc:
+   #+BEGIN_SRC sh
+   export http_proxy=http://172.16.8.250:3128 && export https_proxy=http://172.16.8.250:3128 && export ftp_proxy=http://172.16.8.250:3128
+   #+END_SRC
+
+   Unset them:
+   #+BEGIN_SRC sh
+   export http_proxy= && export https_proxy= && export ftp_proxy=
+   #+END_SRC
 * Git
 ** Initial Settings
    - General information required by git
    #+BEGIN_SRC sh
-git config --global user.name "Felix Brilej"
-git config --global user.email felix.brilej@dermalog.com
+     git config --global user.name "Felix Brilej"
+     git config --global user.email felix.brilej@dermalog.com
    #+END_SRC
+
    - Install ssh key
    #+BEGIN_SRC sh
-   # check if ssh-agent is running
-   ps -e | grep [s]sh-agent
-   # start the ssh-agent if it's not running
-   ssh-agent /bin/bash
-   # Unlock the ssh key
-   ssh-add ~/.ssh/id_rsa.pub
+     # check if ssh-agent is running
+     ps -e | grep [s]sh-agent
+     # start the ssh-agent if it's not running
+     ssh-agent /bin/bash # Unlock the ssh key ssh-add ~/.ssh/id_rsa.pub
    #+END_SRC
 ** Undo last commit
    [2015-03-26 Thu 11:35]
@@ -328,6 +368,11 @@ $c->commit'
   Bei Ipconfigs oder Firewall-configs einen AT job einstellen der das System im Fehlerfall wieder
   verfügbar macht
 * /bin/bash
+** ls
+   Nur die Dateigröße mit Dateinamen anzeigen
+   #+BEGIN_SRC sh
+     ls -lh | awk '{print $5 "\t" $9}'
+   #+END_SRC
 ** Colors
    Black       0;30     Dark Gray     1;30
    Blue        0;34     Light Blue    1;34
