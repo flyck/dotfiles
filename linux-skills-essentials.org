@@ -6,7 +6,7 @@ The contents of this file are taken from edx.org.
 Taking the video course for this at [[https://www.edx.org/course/linux-system-administration-essentials-linuxfoundationx-lfs201x][edx.org essential linux skills]] costs $500. I think i can learn
 this by myself on the run.
 
-Im not completely happy on how this file contains mostly out of headlines.
+Im not completely happy on how this file consists mostly out of headlines.
 
 * DONE Edit text files on the command line
   CLOSED: [2015-07-25 Sa 22:12]

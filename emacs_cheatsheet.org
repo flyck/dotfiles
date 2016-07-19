@@ -7,22 +7,23 @@
 #+OPTIONS: toc:nil
 
 * Kommandos
-| Kommando  | Beschreibung                                     |
-|-----------+--------------------------------------------------|
-| M-S-;     | Ein / Auskommentieren einer Auswahl              |
-| C-M-q     | Ace-jump-search                                  |
-| C-x h     | Markiere den ganzen Buffer                       |
-| M-h       | Markiere den Paragraphen                         |
-| C-c C-x b | Erstelle einen temporären Buffer aus der Auswahl |
-| C-c C-x s | Archiviere die aktuelle Headline                 |
-| C-c C-o   | Öffne den aktuellen Link                         |
-| C-c -     | Toggle list style                                |
-|-----------+--------------------------------------------------|
-| C-c a a   | Öffne Org agenda                                 |
-| f         | Nächste Woche                                    |
-| b         | Vorherige Woche                                  |
-|-----------+--------------------------------------------------|
-| g         | update buffer (dired-mode)                       |
+| Kommando    | Beschreibung                                     |
+|-------------+--------------------------------------------------|
+| M-S-;       | Ein / Auskommentieren einer Auswahl              |
+| C-M-q       | Ace-jump-search                                  |
+| C-x h       | Markiere den ganzen Buffer                       |
+| M-h         | Markiere den Paragraphen                         |
+| C-c C-x b   | Erstelle einen temporären Buffer aus der Auswahl |
+| C-c C-x s   | Archiviere die aktuelle Headline                 |
+| C-c C-o     | Öffne den aktuellen Link                         |
+| C-c -       | Toggle list style                                |
+| C-c C-x C-d | Show timers behind tasks (org-clock-display)     |
+|-------------+--------------------------------------------------|
+| C-c a a     | Öffne Org agenda                                 |
+| f           | Nächste Woche                                    |
+| b           | Vorherige Woche                                  |
+|-------------+--------------------------------------------------|
+| g           | update buffer (dired-mode)                       |
 
 * Liste an Hinweisen
 | Hinweise                                           |
