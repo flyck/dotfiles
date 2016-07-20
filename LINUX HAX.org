@@ -48,7 +48,6 @@
      mysql -u root > UPDATE mysql.user SET Password=PASSWORD('newpwd') WHERE User='root'; mysql > FLUSH PRIVILEGES;
    #+END_SRC
 
-
 ** What to do when your mysql wont start generally
    #+BEGIN_SRC sh
    service mysqld stop
