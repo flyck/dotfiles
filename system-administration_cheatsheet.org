@@ -1,5 +1,5 @@
 #+Title:  System-Administration Cheatsheet
-#+Author: Felix Penta
+#+Author: Felix Brilej
 
 * Eine Online-Applikation austauschen
 ** Vorbereitung
