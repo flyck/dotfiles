@@ -1,0 +1,58 @@
+#+Title:  System-Administration Cheatsheet
+#+Author: Felix Penta
+
+* Eine Online-Applikation austauschen
+** Vorbereitung
+*** Technisch
+    - Spezifikationen des alten Systems herausfinden
+    - Spezifikationen des alten Systems beim neuen System implementieren
+    - Das neue System zur genüge Testen
+    - Unbekannte identifizieren
+      - Mit welchem der Teilschritte des Austausches kenne ich mich wenig aus?
+      - Wer kann mir in einem solchen Fall weiterhelfen?
+      - Gibt es ein Backup dieser Teilkomponente mit der ich mich nicht auskenne?
+*** Menschlich
+    - Die Benutzer über die Veränderung der Software ein paar Tage vorher informieren
+    - Eventuell eine Schulung durchführen
+** Durchführung
+   1. Downtime der Applikation ankündigen
+   2. Die Online-Applikation austauschen (bspw. durch Umstellen von Links)
+   3. Die Benutzer bei der Wiederaufnahme ihrer Tätigkeit beobachten um zu sehen ob alles auch auf
+      deren Seite läuft wie geplant
+      - Man kann nicht alles planen, daher lohnt sich hier die Überprüfung
+   4. Das Alte System ausschalten
+** Nachgang
+   - Kritik bei Benutzern erfragen
+   - Dieses Dokument erweitern
+* Große Upgrades auf einem System
+  - Einen Snapshot von allen betroffenen Systemen machen wenn möglich (Mysql-Server nicht
+    vergessen)
+  - Die Schritte dokumentieren
+  - Den log von der Shell abspeichern
+  - Diese Infos eventuell in einem eigenen Ordner ablegen a la "upgrade von x.y auf a.b"
+* Meine Systemarbeit verbessern
+  - Bestimmte Techniken systematisch lernen
+    - ssh
+      - [ ] public / private rsa key pair erstellen / verwalten?
+      - [ ] tunnelling, wie geht das?
+    - Raids auswendig kennen
+  - Gute Tools schreiben
+    - Ausfallsicher
+    - Maintainable
+    - Dokumentiert
+    - Meine Tools: SDK Excel AddIn, VMCreate Excel AddIn
+  - Von Kollegen lernen
+    - Bei komplizierten Aufgaben bei Kollegen zuschauen
+    - Notizen machen, katalogisieren
+  - Alle Änderungen an Life-Systemen vorher testen
+    - Logrotate-configs
+    - Cronjobs
+    - einfach alles
+** Allgemeine Organisation
+   1. Morgens Mails lesen und Tickets lesen
+      1. Mails vom Ticketsystem auf "gelesen" stellen um neue Updates zu erhalten
+   2. Daraus Aufgaben ableitung und über emacs in ~projects.org~ einfügen
+   3. Diese Aufgaben priorisieren
+      - Dadurch fühle ich mich beim abarbeiten besser solange ich mich an die festgelegten
+        Prioritäten halte
+* TODO Translate this to english
