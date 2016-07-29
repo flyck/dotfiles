@@ -82,6 +82,8 @@
     rpm -qa | grep -i name
     #Uninstall a package
     rpm -e name
+    #Update a package with a new rpm in the current directory
+    rpm -U local_upgrade.rpm
   #+END_SRC
 
 * Proxy settings
@@ -113,6 +115,7 @@
    #+BEGIN_SRC sh
      git config --global user.name "Felix Brilej"
      git config --global user.email felix.brilej@dermalog.com
+     git config --global http.proxy http://172.16.8.250:3128
    #+END_SRC
 
    - Install ssh key
@@ -302,7 +305,10 @@ find -type f -exec sed -i -e 's/sqlplus/sqlplus64/g' {} \;
    grep -iE "(warning|error|critical)" /var/log/fetchmail.log
 ** Change hostname color in commandline
    #+BEGIN_SRC sh
+   # yellow (for normal)
    export PS1='\[\033[33m\]\u@\H:\w \[\033[m\]'
+   # red (for root)
+   export PS1='\[\033[1;31m\]\u@\H:\w \[\033[m\]'
    #+END_SRC
 ** Change the default apache/httpd webpage
 cd /var/wwww/html; touch index.html; service httpd restart
