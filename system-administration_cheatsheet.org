@@ -25,11 +25,22 @@
    - Kritik bei Benutzern erfragen
    - Dieses Dokument erweitern
 * Große Upgrades auf einem System
+  Informationen zum Update?
+  - Was wird bei einem Update tatsächlich gemacht?
+    - Die Information "das Update brauchen Sie" reicht nicht, hier brauchen wir mehr technische
+      Hintergründe um auch Fehlerfällen vorzubeugen
+
+  Während des Updates
   - Einen Snapshot von allen betroffenen Systemen machen wenn möglich (Mysql-Server nicht
     vergessen)
   - Die Schritte dokumentieren
-  - Den log von der Shell abspeichern
   - Diese Infos eventuell in einem eigenen Ordner ablegen a la "upgrade von x.y auf a.b"
+
+  Nach dem Update:
+  - Den Log von der Shell abspeichern / in der Projektdokumentation sichern
+  - Grund-Funktionen oder Usecases durchtesten
+    - Nicht mit meinem Account (root-Account)
+
 * Meine Systemarbeit verbessern
   - Bestimmte Techniken systematisch lernen
     - ssh

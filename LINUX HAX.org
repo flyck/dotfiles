@@ -1,18 +1,23 @@
 #+TITLE:  Linux Hax
 #+AUTHOR: Felix Brilej
+#+DATE:   <2016-08-31 Mi>
+#+Options: toc:nil
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="styles/base.css" />
 
 
 * THE GOLDEN RULES
   :Properties:
-  :Visibility: children
+  :VISIBILITY: children
   :End:
   - Check your firewall
   - Do you use sudo and therefor have different runtime variables (or a different environment)?
     This couldn't be confirmed by my colleagues :/
   - Check if the logfile is readable if you get no Feedback at all
-* Oracle Linux
+* Oracle Linux                                                                       :oracle:
 ** Change the computer name
-   /etc/sysconfig/network /etc/hosts
+   Edit the following files:
+   - /etc/sysconfig/network
+   - /etc/hosts
 ** Add a repository
    For CentOS and Red Hat Enterprise Linux 6.x:
    #+BEGIN_SRC sh
@@ -23,42 +28,37 @@
 
    For Oracle Linux 6.x:
    #+BEGIN_SRC sh
-     cd /etc/yum.repos.d/
-     wget http://public-yum.oracle.com/public-yum-ol6.repo
+   cd /etc/yum.repos.d/
+   wget http://public-yum.oracle.com/public-yum-ol6.repo
    #+END_SRC
 
-   If this happens:
-   #+BEGIN_QUOTE
-   Error: Cannot retrieve metalink for repository: epel. Please verify its path and try again
-   #+END_QUOTE
+   If this shows: "Error: Cannot retrieve metalink for repository: epel. Please verify its path and try again"
    Maybe it is because of old certificates. An alternative would be to use repositorise with only
    http and not https. However, sticking with https, try:
    #+BEGIN_SRC sh
    yum --disablerepo=epel -y update  ca-certificates
    #+END_SRC
 ** Change keyboard layout
-   /etc/sysconfig/keyboard change good looking entries into “de”
+   Change good looking entries in /etc/sysconfig/keyboard from "en" into “de”
 
 * MySQL
-** What to do when you cant start mysql as root
-   Maybe not exactly right
+   What to do when you cant start mysql as root (maybe not exactly right)
    #+BEGIN_SRC sh
-     service mysqld stop
-     /usr/bin/mysqld start --skip-grant-tables -user=root
-     mysql -u root > UPDATE mysql.user SET Password=PASSWORD('newpwd') WHERE User='root'; mysql > FLUSH PRIVILEGES;
+   service mysqld stop
+   /usr/bin/mysqld start --skip-grant-tables -user=root
+   mysql -u root > UPDATE mysql.user SET Password=PASSWORD('newpwd') WHERE User='root'; mysql > FLUSH PRIVILEGES;
    #+END_SRC
 
-** What to do when your mysql wont start generally
+   What to do when your mysql wont start generally
    #+BEGIN_SRC sh
    service mysqld stop
    mv /var/lib/mysql/mysql.sock /var/lib/mysql/mysql.sock.bak
    service mysqld start
    #+END_SRC
 
-** Mysql Passwort ändern
-   mysqladmin -u root -p'abc' password '123456'
-** Wichtige Befehle
+   Overall important commands
    #+BEGIN_SRC sql
+   mysqladmin -u root -p'abc' password '123456' --change root password
    show databases;
    use testdatabase; --enables you to query the selected database
    show tables;
@@ -74,21 +74,21 @@
 
   Some usefull hacks
   #+BEGIN_SRC sh
-    #Check whether a folder belongs to a package
-    rpm -q -whatprovides /etc/profile
-    #List all installed packages
-    rpm -qa | less
-    #Search for a specific package
-    rpm -qa | grep -i name
-    #Uninstall a package
-    rpm -e name
-    #Update a package with a new rpm in the current directory
-    rpm -U local_upgrade.rpm
+  #Check whether a folder belongs to a package
+  rpm -q -whatprovides /etc/profile
+  #List all installed packages
+  rpm -qa | less
+  #Search for a specific package
+  rpm -qa | grep -i name
+  #Uninstall a package
+  rpm -e name
+  #Update a package with a new rpm in the current directory
+  rpm -U local_upgrade.rpm
   #+END_SRC
 
 * Proxy settings
-** Setup proxy information that works with cpan
-   #+BEGIN_SRC
+   Setup proxy information that works with cpan
+   #+BEGIN_SRC sh
    perl -MCPAN -e shell
    o conf init /proxy/
    http://172.16.8.250:3128
@@ -96,26 +96,26 @@
    exit
    #+END_SRC
 
-** Proxy for git
-   git config --global http.proxy http://172.16.8.250:3128; git config --global https.proxy  http://172.16.8.250:3128
-
-** Proxy in bash
-   Just add the following to the end of you bashrc:
+   Proxy for git
    #+BEGIN_SRC sh
-   export http_proxy=http://172.16.8.250:3128 && export https_proxy=http://172.16.8.250:3128 && export ftp_proxy=http://172.16.8.250:3128
+   git config --global http.proxy http://172.16.8.250:3128; git config --global https.proxy  http://172.16.8.250:3128
    #+END_SRC
 
-   Unset them:
+   Proxy for bash
    #+BEGIN_SRC sh
+   #Just add the following to the end of you bashrc:
+   export http_proxy=http://172.16.8.250:3128 && export https_proxy=http://172.16.8.250:3128 && export ftp_proxy=http://172.16.8.250:3128
+   #Unset them:
    export http_proxy= && export https_proxy= && export ftp_proxy=
    #+END_SRC
+
 * Git
 ** Initial Settings
    - General information required by git
    #+BEGIN_SRC sh
-     git config --global user.name "Felix Brilej"
-     git config --global user.email felix.brilej@dermalog.com
-     git config --global http.proxy http://172.16.8.250:3128
+   git config --global user.name "Felix Brilej"
+   git config --global user.email felix.brilej@dermalog.com
+   git config --global http.proxy http://172.16.8.250:3128
    #+END_SRC
 
    - Install ssh key
@@ -125,95 +125,138 @@
      # start the ssh-agent if it's not running
      ssh-agent /bin/bash # Unlock the ssh key ssh-add ~/.ssh/id_rsa.pub
    #+END_SRC
+
 ** Undo last commit
-   [2015-03-26 Thu 11:35]
+   #+BEGIN_SRC sh
+   git commit ....  git reset --soft HEAD~1
+   # edit files as needed
+   git add ...  git commit -c ORIG_HEAD
+   #+END_SRC
 
-#+BEGIN_SRC sh
-  git commit ....  git reset --soft HEAD~1
-  # edit files as needed
-  git add ...  git commit -c ORIG_HEAD
-#+END_SRC
-
-if your commit is total crap:
-
-#+BEGIN_SRC sh
-  git reset --hard HEAD~1
-#+END_SRC
+   if your commit is total crap:
+   #+BEGIN_SRC sh
+   git reset --hard HEAD~1
+   #+END_SRC
 
 ** Line Endings
-   Überlasst mir als user komplett die Datei-Endungs-Konvertierungen
+   Leave all line-ending business to the user:
+   #+BEGIN_SRC sh
    git config --global core.autocrlf false
-*** TODO Hier hatte ich doch eine bessere Lösung
+   #+END_SRC
+
 ** Clone Subdir
-   #+BEGIN_QUOTE
-   Suppose your project is in a dir called project, and you want only those commits which touch project/dirB.
-
-   Then:
-
+   Suppose your project is in a directory called "project", and you want only those commits which touch project/dirB.
+   #+BEGIN_SRC sh
    git clone project/ subproject/
    cd subproject
    git filter-branch --prune-empty --subdirectory-filter dirB HEAD
+   #+END_SRC
+   The subproject will now contain the git history which touches dirB.
+** Fix: Local SSL issuer certificate error
+   #+BEGIN_SRC sh
+   git config --global http.sslVerify false
+   #+END_SRC
 
-   subproject will now contain the git history which touches dirB.
-   #+END_QUOTE
+** Fix: GNU TLS Error on clone
+   The error message:
+   #+BEGIN_SRC sh
+   # happens after installing git using the normal ubuntu repositories
+   apt-get install git
+   # git clone https://tfs.somesite.com
+   error: gnutls_handshake() failed: A TLS packet with unexpected length was received. while accessing https://tfs.somesite.com
+   #+END_SRC
+
+   Fix on ubuntu:
+   #+BEGIN_SRC sh
+   apt-get remove git
+   apt-get install build-essential fakeroot dpkg-dev
+   mkdir ~/git-openssl
+   cd ~/git-openssl
+   apt-get source git
+   apt-get build-dep git
+   apt-get install libcurl4-openssl-dev
+   dpkg-source -x git_*.dsc
+   cd git*
+   # edit debian/control file and replace all instances of “libcurl4-gnutls-dev” with “libcurl4-openssl-dev” (I used sudo vim debian/control) using vim: :%s/libcurl4-gnutls-dev/libcurl4-openssl-dev/gc
+   # remove the line TEST=test from the file debian/rules or it will take AGES to compile (I used sudo vim debian/rules to edit the file)
+   # can i remove the ASCII generation, too? i dont need these docs
+   dpkg-buildpackage -rfakeroot -b
+   sudo dpkg -i ../git_*_amd64.deb
+   #+END_SRC
+
 * Mailing
 ** Postfix
-*** main.cf / Wofür steht masquerade_domain bei postfix?
-    Für eine Empfänger-Adressen umschreib-Logik.
-
-    masquerade_domains = foo.example.com example.com
-    strips "user@any.thing.foo.example.com" to "user@foo.example.com", but strips "user@any.thing.else.example.com" to "user@example.com".
+   main.cf / Wofür steht masquerade_domain bei postfix?
+   Für eine Empfänger-Adressen umschreib-Logik.
+   masquerade_domains = foo.example.com example.com
+   strips "user@any.thing.foo.example.com" to "user@foo.example.com", but strips "user@any.thing.else.example.com" to "user@example.com".
 ** Fetchmail
-*** Zertifikaten-Kette anzeigen lassen
-    openssl s_client -connect pop.gmx.net:995 -showcerts
-    - das angezeigte Zertifikat muss von BEGIN bis END als .pem file angelegt werden
-    - anschließend muss über die datei ein c_rehash (auf die directory) ausgeführt werden
-      #+BEGIN_SRC sh
-      c_rehash .
-      #+END_SRC
-    - wird auf das Oberverzeichnis über ~ssl sslcertck sslcertpath /home/rtracker/.fetchmail/certs~
-      verwiesen kommt es nicht mehr zum Fehler eines unbekannten Zertifikates beim Abholen der Mails
-**** Alternative für Ubuntu
-     Ich bin mir unsicher welcher Schritt jetzt genau zur Lösung geführt hat
-     - Auch die Dermalog-CA als cert hinzufügen
-     - Beim openssl test die Dermalog-CA direkt als Ca-cert file angeben
+   _Show certificate-chain_
+   openssl s_client -connect pop.gmx.net:995 -showcerts
+   - das angezeigte Zertifikat muss von BEGIN bis END als .pem file angelegt werden
+   - anschließend muss über die datei ein c_rehash (auf die directory) ausgeführt werden
      #+BEGIN_SRC sh
-sudo cp /usr/share/ca-certificates/outlook.dc.dermalog.com.crt /usr/local/share/ca-certificates/
-sudo update-ca-certificates
-openssl s_client -CAfile ~/.fetchmail/certs/DERMALOG-CA012.dermalog.hh.pem -connect 10.120.20.218:995 -showcerts
+     c_rehash .
      #+END_SRC
-*** Convert a .cer into a .pem file
-    openssl x509 -inform der -in certificate.cer -out certificate.pem
+   - wird auf das Oberverzeichnis über ~ssl sslcertck sslcertpath /home/rtracker/.fetchmail/certs~
+     verwiesen kommt es nicht mehr zum Fehler eines unbekannten Zertifikates beim Abholen der Mails
+
+   _Alternative für Ubuntu_
+   Ich bin mir unsicher welcher Schritt jetzt genau zur Lösung geführt hat
+   - Auch die Dermalog-CA als cert hinzufügen
+   - Beim openssl test die Dermalog-CA direkt als Ca-cert file angeben
+   #+BEGIN_SRC sh
+   sudo cp /usr/share/ca-certificates/outlook.dc.dermalog.com.crt /usr/local/share/ca-certificates/
+   sudo update-ca-certificates
+   openssl s_client -CAfile ~/.fetchmail/certs/DERMALOG-CA012.dermalog.hh.pem -connect 10.120.20.218:995 -showcerts
+   #+END_SRC
+
+   _Convert a .cer into a .pem file_
+   #+BEGIN_SRC sh
+   openssl x509 -inform der -in certificate.cer -out certificate.pem
+   #+END_SRC
+
 * Ubuntu
-** Fenster verschieben
-   strg windows pfeil
-** Ubuntu repository
-   vim /etc/apt/sources.list
-** Ubuntu enable root login
-   sudo passwd root sudo passwd -u root
+  Fenster verschieben: strg windows pfeil
+  Ubuntu repository: /etc/apt/sources.list
+
+  Ubuntu enable root login
+  #+BEGIN_SRC sh
+  sudo passwd root
+  sudo passwd -u root
+  #+END_SRC
+
 * SSH
-** Passwortlosen Login über ssh-key von einem auf das andere System realisieren
+** Realize password-less login via ssh-key from one to another system
    1) ssh root@alpha
       1) passwort eingeben
    2) ssh-keygen -t rsa -P '' -f ~/.ssh/id_dsa
    3) ssh-copy-id -i ~/.ssh/id_dsa.pub root@omega
    4) ssh root@omega (zum testen)
-** Enable / Disable remote root access
-   Set a root password
+
+   Enable / Disable remote root access
+   #+BEGIN_SRC sh
+   #Set a root password
    sudo passwd root
-   Reverting that back: sudo passwd -l root
+   #Reverting that back:
+   sudo passwd -l root
+   #+END_SRC
 
    Allow remote root login:
    in /etc/ssh/sshd_config: # PermitRootLogin yes
    service ssh reload
 ** mpssh
    Auf mehreren PCs gleichzeitig einen Bash-Befehl ausführen
+   #+BEGIN_SRC sh
    mpssh -f ~/banks.txt -v "uptime"
+   #+END_SRC
+
 ** Emacs
    Damit emacs den ssh-key benutzt muss tatsächlich das folgende ausgeführt werden
    #+BEGIN_SRC sh
    ssh-add ~/.ssh/*private
    #+END_SRC
+
 * vSphere
 ** VM Plattenplatz erhöhen
    1) Vor Plattenplatzerweiterung nach Rücksprache Snapshots löschen
@@ -259,9 +302,15 @@ openssl s_client -CAfile ~/.fetchmail/certs/DERMALOG-CA012.dermalog.hh.pem -conn
    - hostname asd.site
    - service network restart
 ** chkconfig 									     :Ubuntu:
-   equivalents to these: chkconfig --add <service> chkconfig --level 345 <service> on chkconfig
-   --del <service> are: update-rc.d <service> defaults update-rc.d <service> start 20 3 4 5
+   #+BEGIN_SRC sh
+   #equivalents to these:
+   chkconfig --add <service> chkconfig --level 345 <service> on
+   chkconfig --del <service>
+   #are:
+   update-rc.d <service> defaults update-rc.d <service> start 20 3 4 5
    update-rc.d -f <service> remove
+   #+END_SRC
+
 ** /boot Partition full 							     :Ubuntu:
    fire up this multiple times: sudo apt-get autoremove
 ** How to mount a cd:
@@ -274,17 +323,22 @@ mount -t iso9660 /dev/scd0 /media/cdrom/
 
 ** Find out File Size, Disk size, directory Size
    ncdu
-** Search through bash history
-   history | grep asd
 ** Only download packages via yum
-   yum install yum-downloadonly yum install --downloadonly --downloaddir=<directory> <package>
+   #+BEGIN_SRC sh
+   yum install yum-downloadonly
+   yum install --downloadonly --downloaddir=<directory> <package>
+   #+END_SRC
 
-** In allen Dateien in einem Unterordner alle “sqlplus” in “sqlplus64” ändern:
-find -type f -exec sed -i -e 's/sqlplus/sqlplus64/g' {} \;
+** find, grep or sed goodies
+   #+BEGIN_SRC sh
+   find -type f -exec sed -i -e 's/sqlplus/sqlplus64/g' {} \;
+   #search for string in current directory
+   grep -R 'string' dir/
+   #+END_SRC
 
 ** Logrotate
    Beispiel von AGerler:
-   #+BEGIN_VERSE
+   #+BEGIN_SRC sh
    cat /etc/logrotate.d/fetchmail
    /var/log/fetchmail.log {
 
@@ -295,12 +349,13 @@ find -type f -exec sed -i -e 's/sqlplus/sqlplus64/g' {} \;
 
    delaycompress
    }
-   #+END_VERSE
+   #+END_SRC
    - weekly: zeitintervall
    - create: chmod parameter, owner und group
    - rotate: anzahl an "rotates" welche ein logfile bestehen bleibt bevor es gelöscht wird
    - compress: ob ein log gezipt wird oder nicht
    - delaycompress: das log wird erst nach der rotation compressed (file-handle-gründe)
+
 ** Search through log with Grep and a regular expression (regexp)
    grep -iE "(warning|error|critical)" /var/log/fetchmail.log
 ** Change hostname color in commandline
@@ -310,42 +365,31 @@ find -type f -exec sed -i -e 's/sqlplus/sqlplus64/g' {} \;
    # red (for root)
    export PS1='\[\033[1;31m\]\u@\H:\w \[\033[m\]'
    #+END_SRC
-** Change the default apache/httpd webpage
-cd /var/wwww/html; touch index.html; service httpd restart
-
-** Show all files in the current directory, including hidden files
-ls -a | head
-
 ** Create an alias:
 vi /root/.bashrc or vi /home/SOMEUSER/.bashrc alias keyword='target'
 
 ** Show all processes that run under the user dermalog:
-ps -ef | grep dermalog
+   #+BEGIN_SRC sh
+   ps -ef | grep dermalog
+   #+END_SRC
 
-** Change timezone:
-cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+** Change timezone
+   #+BEGIN_SRC sh
+   cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+   #+END_SRC
 
-** Open process in background:
-firefox & disown
+** Open process in background
+   #+BEGIN_SRC sh
+   firefox & disown
+   #+END_SRC
 
 ** Unpack a .tar.gz file
-tar -xvzf datei.tar.gz (-x extract, -v verbose output, -f file to be unpacked, -z erst gzip, dann
-tar)
-
-** Screen session quiting
-screen -X -S <session-id> kill
-
-** Windows lineendings to unix lineendings
-   in vim: set ff=unix
-
-** Search for string in a directory
-   grep -R 'string' dir/
+   #+BEGIN_SRC sh
+   tar -xvzf datei.tar.gz #(-x extract, -v verbose output, -f file to be unpacked, -z erst gzip, dann tar)
+   #+END_SRC
 
 ** Rsync
    rsync -avz ursprung root@192.168.0.1:/ziel/
-
-** Search for a package with apt-get
-apt-cache search <package_name>
 
 ** Install cpan modules with dependencies
 perl -MCPAN -e 'my $c = "CPAN::HandleConfig"; $c->load(doit => 1, autoconfig => 1);
@@ -353,65 +397,74 @@ $c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_poli
 $c->commit'
 
 ** Monitor a process that times out
-   strace -f pid-file (child-threads followen) (not confirmed) Short of that, you can always look
-   in the process init script. For instance, the SSH daemon is started with the script in
-   /etc/init.d/sshd. Sometimes the PID will be defined there (search for pid, PID, PIDFILE,
-   PID_FILE, etc.).  For anything that sources /etc/init.d/functions, the PID will live in
-   /var/run/*.pid.
-** PC auf offene Ports überprüfen
-   nmap, wichtig ist das von einem komplett seperaten System zu machen
+   #+BEGIN_SRC sh
+   strace -f pid-file (child-threads followen) (not confirmed)
+   #+END_SRC
+   Short of that, you can always look in the process init script. For instance, the SSH daemon is
+   started with the script in /etc/init.d/sshd. Sometimes the PID will be defined there (search
+   for pid, PID, PIDFILE, PID_FILE, etc.).  For anything that sources /etc/init.d/functions, the
+   PID will live in /var/run/*.pid.
+
 ** PS1 Config
-   /bin/bash commandline setting (in ~/.bashrc eintragen):
+   #+BEGIN_SRC sh
+   #bin/bash commandline setting (put into ~/.bashrc):
    export PS1='\[\033[33m\]\u@\H:\w \[\033[m\]'
+   #+END_SRC
+
 ** Cronjobs
    Achtung! Cronjobs starten jede Minute neu und senden entsprechende report-Mails an verschiedene
    User sollte es bei der Ausführung einen Fehler gegeben haben
-*** logging anschalten
-    59 23 * * * /home/john/bin/backup.sh > /home/john/logs/backup.log 2>&1
-* Configs resetten
-  Mit AT einstellen in 10 Minuten ne config zu resetten (AT-Jobs)
-  Bei Ipconfigs oder Firewall-configs einen AT job einstellen der das System im Fehlerfall wieder
-  verfügbar macht
-* /bin/bash
-** ls
-   Nur die Dateigröße mit Dateinamen anzeigen
+
+   Logging anschalten:
    #+BEGIN_SRC sh
-     ls -lh | awk '{print $5 "\t" $9}'
+   59 23 * * * /home/john/bin/backup.sh > /home/john/logs/backup.log 2>&1
    #+END_SRC
-** Colors
-   Black       0;30     Dark Gray     1;30
-   Blue        0;34     Light Blue    1;34
-   Green       0;32     Light Green   1;32
-   Cyan        0;36     Light Cyan    1;36
-   Red         0;31     Light Red     1;31
-   Purple      0;35     Light Purple  1;35
-   Brown       0;33     Yellow        1;33
-   Light Gray  0;37     White         1;37
-** Colorful motd (in red)
-   Andere motds kommen aus ~/etc/update-motd/~
-#+BEGIN_SRC
-   echo -en "\033[1;34m" > /etc/motd
-   echo "Text of your motd file....." >> /etc/motd
-   echo -en "\033[0m" >> /etc/motd
-#+END_SRC
-* Debugging of Binaries
-  To debug binaries that misbehave and dont give obvious logs try the following:
-  - Look in the system messages log
+
+** Configs resetten
+   Mit AT einstellen in 10 Minuten ne config zu resetten (AT-Jobs)
+   Bei Ipconfigs oder Firewall-configs einen AT job einstellen der das System im Fehlerfall wieder
+   verfügbar macht
+** /bin/bash
+*** ls
+    Nur die Dateigröße mit Dateinamen anzeigen
     #+BEGIN_SRC sh
-    less /var/log/messages
+    ls -lh | awk '{print $5 "\t" $9}'
     #+END_SRC
-  - Use strace and look out for file permission errors which might cause the binary to stop
+
+*** Colors
+    Black       0;30     Dark Gray     1;30
+    Blue        0;34     Light Blue    1;34
+    Green       0;32     Light Green   1;32
+    Cyan        0;36     Light Cyan    1;36
+    Red         0;31     Light Red     1;31
+    Purple      0;35     Light Purple  1;35
+    Brown       0;33     Yellow        1;33
+    Light Gray  0;37     White         1;37
+
+*** Colorful motd (in red)
+    Andere motds kommen aus ~/etc/update-motd/~
     #+BEGIN_SRC sh
-    strace -pid <PID> -f
+    echo -en "\033[1;34m" > /etc/motd
+    echo "Text of your motd file....." >> /etc/motd
+    echo -en "\033[0m" >> /etc/motd
     #+END_SRC
-  - Debug the binary with gdb (u are going pretty deep in here)
-* Port Analysis
-  - Look at opened ports:
-    #+BEGIN_SRC sh
-    netstat -tulpen
-    #+END_SRC
-  - Look at the processes behind them (actually active ports):
-    #+BEGIN_SRC sh
-    # Use a grep filter here because you will be getting way too much
-    netstat -tapen | grep
-    #+END_SRC
+
+** Debugging of Binaries
+   To debug binaries that misbehave and dont give obvious logs try the following:
+   - Look in the system messages log (/var/log/messages)
+   - Use strace and look out for file permission errors which might cause the binary to stop
+     #+BEGIN_SRC sh
+     strace -pid <PID> -f
+     #+END_SRC
+   - Debug the binary with gdb (u are going pretty deep in here)
+** Port Analysis
+   Look at opened ports:
+   #+BEGIN_SRC sh
+   netstat -tulpen
+   #+END_SRC
+
+   Look at the processes behind them (actually active ports):
+   #+BEGIN_SRC sh
+   # Use a grep filter here because you will be getting way too much
+   netstat -tapen | grep
+   #+END_SRC
