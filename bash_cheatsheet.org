@@ -4,8 +4,7 @@
 #+OPTIONS: html-postamble:nil
 #+HTML_HEAD_DISABLED: <link href="bootstrap.css" rel="stylesheet">
 
-* Allgemeine Kommandos
-
+* General commands
   | Kommando    | Beschreibung                                                                               |
   |-------------+--------------------------------------------------------------------------------------------|
   | M-Backspace | Kill word backward from point                                                              |
@@ -15,3 +14,5 @@
   | ESC 10 f    | Prefix key, inserts ffffffffff                                                             |
   | !!          | show previous command and execute it                                                       |
   | !-1 (!-x)   | Show previous command and execute it                                                       |
+  | C-t         | switch character before and at cursor                                                      |
+  | M-t         | switch word before and after cursor                                                        |

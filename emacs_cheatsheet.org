@@ -1,42 +1,40 @@
 #+Title:  Emacs Cheatsheet
 #+Author: Felix Brilej
 #+Date:   <2015-12-05 Sa>
-#+HTML_HEAD_DISABLED: <link href="http://s3.amazonaws.com/codecademy-content/courses/ltp/css/bootstrap.css" rel="stylesheet">
-#+HTML_HEAD_EXTRA_DISABLED: <link rel="stylesheet" type="text/css" href="table_withhover.css" />
+#+HTML_HEAD: <link href="http://s3.amazonaws.com/codecademy-content/courses/ltp/css/bootstrap.css" rel="stylesheet">
 #+OPTIONS: html-postamble:nil
 #+OPTIONS: toc:nil
 
-* Kommandos
-| Kommando    | Beschreibung                                     |
-|-------------+--------------------------------------------------|
-| M-S-;       | Ein / Auskommentieren einer Auswahl              |
-| C-M-q       | Ace-jump-search                                  |
-| C-x h       | Markiere den ganzen Buffer                       |
-| M-h         | Markiere den Paragraphen                         |
-| C-c C-x b   | Erstelle einen temporären Buffer aus der Auswahl |
-| C-c C-x s   | Archiviere die aktuelle Headline                 |
-| C-c C-o     | Öffne den aktuellen Link                         |
-| C-c -       | Toggle list style                                |
-| C-c C-x C-d | Show timers behind tasks (org-clock-display)     |
-|-------------+--------------------------------------------------|
-| C-c a a     | Öffne Org agenda                                 |
-| f           | Nächste Woche                                    |
-| b           | Vorherige Woche                                  |
-|-------------+--------------------------------------------------|
-| g           | update buffer (dired-mode)                       |
+* Commands
+  | Command     | Description                                  |
+  |-------------+----------------------------------------------|
+  | M-S-;       | Toggle comment                               |
+  | C-x h       | mark buffer                                  |
+  | M-h         | mark paragraph                               |
+  | C-c C-x b   | open current section in new buffer           |
+  | C-c C-x a   | archive current headline                     |
+  | C-c C-o     | open link                                    |
+  | C-c -       | Toggle list style                            |
+  | C-c C-x C-d | Show timers behind tasks (org-clock-display) |
+  |-------------+----------------------------------------------|
+  | C-c a a     | open Org agenda                              |
+  | f           | switch to next week                          |
+  | b           | switch to previous week                      |
+  |-------------+----------------------------------------------|
+  | g           | update buffer (dired-mode)                   |
 
-* Liste an Hinweisen
-| Hinweise                                           |
-|----------------------------------------------------|
-| Org-mode Einträge in der Vergangenheit schreiben   |
-|----------------------------------------------------|
-| Startup visibility für einen node:                 |
-| :Properties:                                       |
-| :Visibility: children (content/all)                |
-| :End:                                              |
-|----------------------------------------------------|
-| cua-mode (Situationsabhängig besser als Macros)    |
-|----------------------------------------------------|
-| 1. Activate cua-mode                               |
-| 2. Move point to beginning of rect and press c-ret |
-| 3. Move point to end of rect and press M-i         |
+* List of tips
+  | Tips                                               |
+  |----------------------------------------------------|
+  | Org-mode write in the past                         |
+  |----------------------------------------------------|
+  | Startup visibility for one headline:               |
+  | :Properties:                                       |
+  | :Visibility: children (content/all)                |
+  | :End:                                              |
+  |----------------------------------------------------|
+  | cua-mode                                           |
+  |----------------------------------------------------|
+  | 1. Activate cua-mode                               |
+  | 2. Move point to beginning of rect and press c-ret |
+  | 3. Move point to end of rect and press M-i         |
