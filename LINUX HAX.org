@@ -1,7 +1,6 @@
 #+TITLE:  Linux Hax
 #+AUTHOR: Felix Brilej
-#+DATE:   <2016-08-31 Mi>
-#+Options: toc:nil
+#+Options: toc:nil html-postamble:nil
 #+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="styles/base.css" />
 
 
@@ -12,12 +11,14 @@
   - Check your firewall
   - Do you use sudo and therefor have different runtime variables (or a different environment)?
     This couldn't be confirmed by my colleagues :/
-  - Check if the logfile is readable if you get no Feedback at all
-* Oracle Linux                                                                       :oracle:
-** Change the computer name
+  - Check if the logfile is readable if you get no feedback at all
+* Oracle Linux
+** Change the hostname
    Edit the following files:
    - /etc/sysconfig/network
    - /etc/hosts
+** Change keyboard layout
+   Change good looking entries in /etc/sysconfig/keyboard from "en" into “de”
 ** Add a repository
    For CentOS and Red Hat Enterprise Linux 6.x:
    #+BEGIN_SRC sh
@@ -38,9 +39,32 @@
    #+BEGIN_SRC sh
    yum --disablerepo=epel -y update  ca-certificates
    #+END_SRC
-** Change keyboard layout
-   Change good looking entries in /etc/sysconfig/keyboard from "en" into “de”
 
+* Ubuntu
+  Move windows: control-windows arrow
+  Ubuntu repository direction: /etc/apt/sources.list
+
+  Ubuntu enable root login
+  #+BEGIN_SRC sh
+  sudo passwd root
+  sudo passwd -u root
+  #+END_SRC
+
+** Change hostname 								     :Ubuntu:
+   - /etc/hosts (fqdn, then shorthostname, seperated via tab)
+   - /etc/hostname (short hostname)
+** chkconfig 									     :Ubuntu:
+   #+BEGIN_SRC sh
+   #equivalents to these:
+   chkconfig --add <service> chkconfig --level 345 <service> on
+   chkconfig --del <service>
+   #are:
+   update-rc.d <service> defaults update-rc.d <service> start 20 3 4 5
+   update-rc.d -f <service> remove
+   #+END_SRC
+
+** /boot Partition full 							     :Ubuntu:
+   fire up this multiple times: sudo apt-get autoremove
 * MySQL
    What to do when you cant start mysql as root (maybe not exactly right)
    #+BEGIN_SRC sh
@@ -66,28 +90,35 @@
    select * from testtable where id=1\G --display columns nicely; for tables with many columns
    #+END_SRC
 
-* RPM
-  Differences in software architectures:
-  - x86-64: Initial description for 64-bit architecture
-  - amd64 : x86-64 for amd or intel processors (basically just a new name for the same thing)
-  - i386  : 32 bit architecture
+* Package management
+** RPM
+   Differences in software architectures:
+   - x86-64: Initial description for 64-bit architecture
+   - amd64 : x86-64 for amd or intel processors (basically just a new name for the same thing)
+   - i386  : 32 bit architecture
 
-  Some usefull hacks
-  #+BEGIN_SRC sh
-  #Check whether a folder belongs to a package
-  rpm -q -whatprovides /etc/profile
-  #List all installed packages
-  rpm -qa | less
-  #Search for a specific package
-  rpm -qa | grep -i name
-  #Uninstall a package
-  rpm -e name
-  #Update a package with a new rpm in the current directory
-  rpm -U local_upgrade.rpm
-  #+END_SRC
+   Some usefull hacks
+   #+BEGIN_SRC sh
+   #Check whether a folder belongs to a package
+   rpm -q -whatprovides /etc/profile
+   #List all installed packages
+   rpm -qa | less
+   #Search for a specific package
+   rpm -qa | grep -i name
+   #Uninstall a package
+   rpm -e name
+   #Update a package with a new rpm in the current directory
+   rpm -U local_upgrade.rpm
+   #+END_SRC
 
+** Yum
+*** Only download packages via yum
+    #+BEGIN_SRC sh
+    yum install yum-downloadonly
+    yum install --downloadonly --downloaddir=<directory> <package>
+    #+END_SRC
 * Proxy settings
-   Setup proxy information that works with cpan
+   Proxy for cpan
    #+BEGIN_SRC sh
    perl -MCPAN -e shell
    o conf init /proxy/
@@ -113,17 +144,22 @@
 ** Initial Settings
    - General information required by git
    #+BEGIN_SRC sh
-   git config --global user.name "Felix Brilej"
-   git config --global user.email felix.brilej@dermalog.com
+   git config --global user.name "username"
+   git config --global user.email mailaddress
    git config --global http.proxy http://172.16.8.250:3128
+   #+END_SRC
+
+   Leave all line-ending business to the user:
+   #+BEGIN_SRC sh
+   git config --global core.autocrlf false
    #+END_SRC
 
    - Install ssh key
    #+BEGIN_SRC sh
-     # check if ssh-agent is running
-     ps -e | grep [s]sh-agent
-     # start the ssh-agent if it's not running
-     ssh-agent /bin/bash # Unlock the ssh key ssh-add ~/.ssh/id_rsa.pub
+   # check if ssh-agent is running
+   ps -e | grep [s]sh-agent
+   # start the ssh-agent if it's not running
+   ssh-agent /bin/bash # Unlock the ssh key ssh-add ~/.ssh/id_rsa.pub
    #+END_SRC
 
 ** Undo last commit
@@ -138,12 +174,6 @@
    git reset --hard HEAD~1
    #+END_SRC
 
-** Line Endings
-   Leave all line-ending business to the user:
-   #+BEGIN_SRC sh
-   git config --global core.autocrlf false
-   #+END_SRC
-
 ** Clone Subdir
    Suppose your project is in a directory called "project", and you want only those commits which touch project/dirB.
    #+BEGIN_SRC sh
@@ -152,7 +182,9 @@
    git filter-branch --prune-empty --subdirectory-filter dirB HEAD
    #+END_SRC
    The subproject will now contain the git history which touches dirB.
+
 ** Fix: Local SSL issuer certificate error
+   Alternative: install that ssl certificate, probably the more advanced solution
    #+BEGIN_SRC sh
    git config --global http.sslVerify false
    #+END_SRC
@@ -183,56 +215,42 @@
    dpkg-buildpackage -rfakeroot -b
    sudo dpkg -i ../git_*_amd64.deb
    #+END_SRC
-
 * Mailing
-** Postfix
-   main.cf / Wofür steht masquerade_domain bei postfix?
-   Für eine Empfänger-Adressen umschreib-Logik.
-   masquerade_domains = foo.example.com example.com
-   strips "user@any.thing.foo.example.com" to "user@foo.example.com", but strips "user@any.thing.else.example.com" to "user@example.com".
 ** Fetchmail
    _Show certificate-chain_
    openssl s_client -connect pop.gmx.net:995 -showcerts
-   - das angezeigte Zertifikat muss von BEGIN bis END als .pem file angelegt werden
-   - anschließend muss über die datei ein c_rehash (auf die directory) ausgeführt werden
+   - the shown certificat has to copied to a .pem file from BEGIN to END
+   - next the program "c_rehash" has to be executed in that directory
      #+BEGIN_SRC sh
      c_rehash .
      #+END_SRC
-   - wird auf das Oberverzeichnis über ~ssl sslcertck sslcertpath /home/rtracker/.fetchmail/certs~
-     verwiesen kommt es nicht mehr zum Fehler eines unbekannten Zertifikates beim Abholen der Mails
+   - in case the parent directory is registered as "sslcertpath" the certificate error is now
+     resolved
+     #+BEGIN_SRC sh
+     ssl sslcertck sslcertpath /home/rtracker/.fetchmail/certs
+     #+END_SRC
 
-   _Alternative für Ubuntu_
-   Ich bin mir unsicher welcher Schritt jetzt genau zur Lösung geführt hat
-   - Auch die Dermalog-CA als cert hinzufügen
-   - Beim openssl test die Dermalog-CA direkt als Ca-cert file angeben
+   _Alternative for Ubuntu_
+   This is knowledge I gained from a whole lot of debugging, I'm not exactly sure about this one
+   - Also add the CA as certifcate
+   - When testing the openssl directly add the CA as a ca-cert file
    #+BEGIN_SRC sh
-   sudo cp /usr/share/ca-certificates/outlook.dc.dermalog.com.crt /usr/local/share/ca-certificates/
+   sudo cp /usr/share/ca-certificates/outlook.dc.somesite.com.crt /usr/local/share/ca-certificates/
    sudo update-ca-certificates
-   openssl s_client -CAfile ~/.fetchmail/certs/DERMALOG-CA012.dermalog.hh.pem -connect 10.120.20.218:995 -showcerts
+   openssl s_client -CAfile ~/.fetchmail/certs/somesite.hh.pem -connect 10.120.20.218:995 -showcerts
    #+END_SRC
 
    _Convert a .cer into a .pem file_
    #+BEGIN_SRC sh
    openssl x509 -inform der -in certificate.cer -out certificate.pem
    #+END_SRC
-
-* Ubuntu
-  Fenster verschieben: strg windows pfeil
-  Ubuntu repository: /etc/apt/sources.list
-
-  Ubuntu enable root login
-  #+BEGIN_SRC sh
-  sudo passwd root
-  sudo passwd -u root
-  #+END_SRC
-
 * SSH
 ** Realize password-less login via ssh-key from one to another system
    1) ssh root@alpha
-      1) passwort eingeben
+      1) enter password
    2) ssh-keygen -t rsa -P '' -f ~/.ssh/id_dsa
    3) ssh-copy-id -i ~/.ssh/id_dsa.pub root@omega
-   4) ssh root@omega (zum testen)
+   4) ssh root@omega (for testing)
 
    Enable / Disable remote root access
    #+BEGIN_SRC sh
@@ -245,88 +263,55 @@
    Allow remote root login:
    in /etc/ssh/sshd_config: # PermitRootLogin yes
    service ssh reload
+
 ** mpssh
-   Auf mehreren PCs gleichzeitig einen Bash-Befehl ausführen
+   Execute one and the same bash-command on multiple systems
    #+BEGIN_SRC sh
    mpssh -f ~/banks.txt -v "uptime"
    #+END_SRC
 
-** Emacs
-   Damit emacs den ssh-key benutzt muss tatsächlich das folgende ausgeführt werden
-   #+BEGIN_SRC sh
-   ssh-add ~/.ssh/*private
-   #+END_SRC
-
 * vSphere
-** VM Plattenplatz erhöhen
-   1) Vor Plattenplatzerweiterung nach Rücksprache Snapshots löschen
-   2) Über das vSphere Interface eine neue Harddisk hinzufügen
-   3) Die neue Platte identifizieren (im Zweifelsfall hilft ein reboot)
+** Increase VM disk-space
+   1) Delete snapshots (need permission of people in charge for this)
+   2) Using the vsphere interface, add a harddisk-device to the system
+   3) Identify the new harddisk (a reboot might be required)
       #+BEGIN_SRC sh
       fdisk -l
+      # The disk that doesnt have a valid partition table is the one we just added
       #+END_SRC
-      Es wird die Platte sein, die keine valide Partition Table enthält
-   4) Die Platte formatieren
+   4) Format the identified disk
       #+BEGIN_SRC sh
-      fdisk /dev/sdb
+      fdisk /dev/identified_disk
       #+END_SRC
-      es folgt ein interaktiver Dialog
-      - "n" für "neue Partition"
-      - "p" für "primary partition"
-      - "1" für partition number, da wir auf dieser Platte bisher keine Partitionen haben
+      what follows is an interactive dialog
+      - "n" for "new Partition"
+      - "p" for "primary partition"
+      - "1" for partition number, since so far we dont have any partition number on this disk
       - first cylinder: "enter"
       - last cylinder: "enter"
       - "t" to change the partitinos system ID, in this case "1" will be set automatically
       - Hex Code: 8e for Linux LVM
       - "w" to write the changes and exit
-   5) Die Änderungen überprüfen mit einem erneuten "fdisk"
-   6) Die formatierte Disk zum LVM hinzufügen
-      Dies geht über die folgenden Befehle:
+   5) Check on those changes by firing um fdisk again
+   6) Add the newly created disk to LVM
       - pvcreate <disk>
       - vgdisplay
       - vgextend <volumegroup> <disk>
       - pvscan
-   7) Die Größe des der LVM Group auf die maximal mögliche Größe erweitern
+   7) Increase the size of the LVM group to the now maximal possible size
       - lvdisplay
       - lvextend <volumegroup> <disk>
       - resize2fs <volumegroup>
-* Basics
-** Change hostname 								     :Ubuntu:
-   - /etc/hosts (fqdn, then shorthostname, seperated via tab)
-   - /etc/hostname (short hostname)
-** Change hostname 								     :CentOS:
-   - /etc/sysconfig/network
-     - asd.site
-   - /etc/hosts
-     - ip asd.site asd
-   - hostname asd.site
-   - service network restart
-** chkconfig 									     :Ubuntu:
-   #+BEGIN_SRC sh
-   #equivalents to these:
-   chkconfig --add <service> chkconfig --level 345 <service> on
-   chkconfig --del <service>
-   #are:
-   update-rc.d <service> defaults update-rc.d <service> start 20 3 4 5
-   update-rc.d -f <service> remove
-   #+END_SRC
-
-** /boot Partition full 							     :Ubuntu:
-   fire up this multiple times: sudo apt-get autoremove
-** How to mount a cd:
-mount -t iso9660 /dev/scd0 /media/cdrom/
-
 ** Eth0 configuration after vmware clone
    vim /etc/udev/rules.d/70-persistent-net.rules
    be carefull when more than one adapter is present. otherwise:
    delete the first block and change the last word in the second block to from eth1 eth0
 
-** Find out File Size, Disk size, directory Size
-   ncdu
-** Only download packages via yum
+* Basics
+  Handy tool to analyze full disks: ncdu
+** Mount a cd
    #+BEGIN_SRC sh
-   yum install yum-downloadonly
-   yum install --downloadonly --downloaddir=<directory> <package>
+   mount -t iso9660 /dev/scd0 /media/cdrom/
    #+END_SRC
 
 ** find, grep or sed goodies
@@ -337,7 +322,7 @@ mount -t iso9660 /dev/scd0 /media/cdrom/
    #+END_SRC
 
 ** Logrotate
-   Beispiel von AGerler:
+   Example from AGerler:
    #+BEGIN_SRC sh
    cat /etc/logrotate.d/fetchmail
    /var/log/fetchmail.log {
@@ -350,51 +335,31 @@ mount -t iso9660 /dev/scd0 /media/cdrom/
    delaycompress
    }
    #+END_SRC
-   - weekly: zeitintervall
+   - weekly: time interval
    - create: chmod parameter, owner und group
-   - rotate: anzahl an "rotates" welche ein logfile bestehen bleibt bevor es gelöscht wird
-   - compress: ob ein log gezipt wird oder nicht
-   - delaycompress: das log wird erst nach der rotation compressed (file-handle-gründe)
+   - rotate: Amount of "rotates" a logfile persists before it gets deleted
+   - compress: whether the log file should be zipped or not
+   - delaycompress: the log only gets zipped after the rotation has been completed (file-handle reasons)
 
-** Search through log with Grep and a regular expression (regexp)
+** Filter a log-file for errors / warnings
    grep -iE "(warning|error|critical)" /var/log/fetchmail.log
-** Change hostname color in commandline
-   #+BEGIN_SRC sh
-   # yellow (for normal)
-   export PS1='\[\033[33m\]\u@\H:\w \[\033[m\]'
-   # red (for root)
-   export PS1='\[\033[1;31m\]\u@\H:\w \[\033[m\]'
-   #+END_SRC
-** Create an alias:
-vi /root/.bashrc or vi /home/SOMEUSER/.bashrc alias keyword='target'
 
-** Show all processes that run under the user dermalog:
+** Show all processes that run under a certain user
    #+BEGIN_SRC sh
-   ps -ef | grep dermalog
+   ps -ef | grep certain_user
    #+END_SRC
 
-** Change timezone
+** Change the timezone
    #+BEGIN_SRC sh
    cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
    #+END_SRC
-
-** Open process in background
-   #+BEGIN_SRC sh
-   firefox & disown
-   #+END_SRC
-
 ** Unpack a .tar.gz file
    #+BEGIN_SRC sh
    tar -xvzf datei.tar.gz #(-x extract, -v verbose output, -f file to be unpacked, -z erst gzip, dann tar)
    #+END_SRC
 
-** Rsync
+** Copy files between systems (rsync)
    rsync -avz ursprung root@192.168.0.1:/ziel/
-
-** Install cpan modules with dependencies
-perl -MCPAN -e 'my $c = "CPAN::HandleConfig"; $c->load(doit => 1, autoconfig => 1);
-$c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes");
-$c->commit'
 
 ** Monitor a process that times out
    #+BEGIN_SRC sh
@@ -420,10 +385,10 @@ $c->commit'
    59 23 * * * /home/john/bin/backup.sh > /home/john/logs/backup.log 2>&1
    #+END_SRC
 
-** Configs resetten
-   Mit AT einstellen in 10 Minuten ne config zu resetten (AT-Jobs)
-   Bei Ipconfigs oder Firewall-configs einen AT job einstellen der das System im Fehlerfall wieder
-   verfügbar macht
+** Change a network config safely
+   Use the "at"-tool to reset the config after 5 minutes (at-jobs).
+   Useful for ipconfig or firewall config-changes to ensure connectivity.
+
 ** /bin/bash
 *** ls
     Nur die Dateigröße mit Dateinamen anzeigen
@@ -449,6 +414,21 @@ $c->commit'
     echo -en "\033[0m" >> /etc/motd
     #+END_SRC
 
+*** Change bash prompt expression
+    #+BEGIN_SRC sh
+    # yellow (for non-root users)
+    export PS1='\[\033[33m\]\u@\H:\w \[\033[m\]'
+    # red (for root)
+    export PS1='\[\033[1;31m\]\u@\H:\w \[\033[m\]'
+    #+END_SRC
+
+*** Open process in background
+    There are multiple solutions for this, it might be interesting looking into this indepth
+    #+BEGIN_SRC sh
+    firefox & disown
+    firefox &
+    firefox #now press C-z
+    #+END_SRC
 ** Debugging of Binaries
    To debug binaries that misbehave and dont give obvious logs try the following:
    - Look in the system messages log (/var/log/messages)
@@ -467,4 +447,12 @@ $c->commit'
    #+BEGIN_SRC sh
    # Use a grep filter here because you will be getting way too much
    netstat -tapen | grep
+   #+END_SRC
+
+** Install cpan modules with dependencies
+   #+BEGIN_SRC sh
+   perl -MCPAN -e 'my $c = "CPAN::HandleConfig";
+   $c->load(doit => 1, autoconfig => 1);
+   $c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes");
+   $c->commit'
    #+END_SRC
