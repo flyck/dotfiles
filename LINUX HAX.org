@@ -344,6 +344,20 @@
 ** Filter a log-file for errors / warnings
    grep -iE "(warning|error|critical)" /var/log/fetchmail.log
 
+** Find out Mac-Address for a different System
+   Prerequesite: Have another system in the same subnet (we call it System A)
+   #+BEGIN_SRC sh
+#From system A
+arp -a
+#nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
+#Ping them once from System A
+ping system_b_IP
+#Again from system A
+arp -a
+nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
+? (system_b_IP) at 00:0c:29:46:b5:55 [ether] on eth0
+   #+END_SRC
+
 ** Show all processes that run under a certain user
    #+BEGIN_SRC sh
    ps -ef | grep certain_user
