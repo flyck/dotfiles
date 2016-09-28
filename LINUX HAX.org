@@ -159,7 +159,9 @@
    # check if ssh-agent is running
    ps -e | grep [s]sh-agent
    # start the ssh-agent if it's not running
-   ssh-agent /bin/bash # Unlock the ssh key ssh-add ~/.ssh/id_rsa.pub
+   ssh-agent /bin/bash
+   # Unlock the ssh key
+   ssh-add ~/.ssh/id_rsa.pub
    #+END_SRC
 
 ** Undo last commit
