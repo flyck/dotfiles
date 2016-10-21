@@ -142,19 +142,31 @@
 
 * Git
 ** Initial Settings
-   - General information required by git
+   Set General information required by git
    #+BEGIN_SRC sh
    git config --global user.name "username"
    git config --global user.email mailaddress
    git config --global http.proxy http://172.16.8.250:3128
    #+END_SRC
+   Show general information required by git
+   #+BEGIN_SRC sh
+   git config user.name
+   git config user.email
+   git config http.proxy
+   Fix: Local SSL issuer certificate error
 
-   Leave all line-ending business to the user:
+Alternative: install that ssl certificate, probably the more advanced solution
+
+git config --global http.sslVerify false
+
+   #+END_SRC
+
+   Leave all line-ending business to the user
    #+BEGIN_SRC sh
    git config --global core.autocrlf false
    #+END_SRC
 
-   - Install ssh key
+   Install ssh key
    #+BEGIN_SRC sh
    # check if ssh-agent is running
    ps -e | grep [s]sh-agent
@@ -192,6 +204,9 @@
    #+END_SRC
 
 ** Fix: GNU TLS Error on clone
+   :PROPERTIES:
+   :dir:      /sshx:root@10.120.113.86:
+   :END:
    The error message:
    #+BEGIN_SRC sh
    # happens after installing git using the normal ubuntu repositories
@@ -201,14 +216,18 @@
    #+END_SRC
 
    Fix on ubuntu:
-   #+BEGIN_SRC sh
-   apt-get remove git
-   apt-get install build-essential fakeroot dpkg-dev
+   #+BEGIN_SRC sh :results raw drawer
+   # public key errors might occur, therefor we nee refreshen our key-db with the following 2 commands
+   apt-key update
+   apt-get update
+   # remove git
+   apt-get remove git -y
+   apt-get install build-essential fakeroot dpkg-dev -y
    mkdir ~/git-openssl
    cd ~/git-openssl
    apt-get source git
-   apt-get build-dep git
-   apt-get install libcurl4-openssl-dev
+   apt-get build-dep git -y
+   apt-get install libcurl4-openssl-dev -y
    dpkg-source -x git_*.dsc
    cd git*
    # edit debian/control file and replace all instances of “libcurl4-gnutls-dev” with “libcurl4-openssl-dev” (I used sudo vim debian/control) using vim: :%s/libcurl4-gnutls-dev/libcurl4-openssl-dev/gc
@@ -217,6 +236,8 @@
    dpkg-buildpackage -rfakeroot -b
    sudo dpkg -i ../git_*_amd64.deb
    #+END_SRC
+
+
 * Mailing
 ** Fetchmail
    _Show certificate-chain_
@@ -387,6 +408,9 @@ nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
    PID will live in /var/run/*.pid.
 
 ** PS1 Config
+   :PROPERTIES:
+   :dir:      /sshx:root@10.120.113.42:
+   :END:
    #+BEGIN_SRC sh
    #bin/bash commandline setting (put into ~/.bashrc):
    export PS1='\[\033[33m\]\u@\H:\w \[\033[m\]'
