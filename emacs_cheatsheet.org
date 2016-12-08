@@ -24,17 +24,22 @@
   | g           | update buffer (dired-mode)                   |
 
 * List of tips
-  | Tips                                               |
-  |----------------------------------------------------|
-  | Org-mode write in the past                         |
-  |----------------------------------------------------|
-  | Startup visibility for one headline:               |
-  | :Properties:                                       |
-  | :Visibility: children (content/all)                |
-  | :End:                                              |
-  |----------------------------------------------------|
-  | cua-mode                                           |
-  |----------------------------------------------------|
-  | 1. Activate cua-mode                               |
-  | 2. Move point to beginning of rect and press c-ret |
-  | 3. Move point to end of rect and press M-i         |
+  | Tips                                                                  |
+  |-----------------------------------------------------------------------|
+  | Org-mode                                                              |
+  |-----------------------------------------------------------------------|
+  | write in the past, makes more sense to other people who read it later |
+  |-----------------------------------------------------------------------|
+  | Startup visibility for one headline:                                  |
+  | :Properties:                                                          |
+  | :Visibility: children (content/all)                                   |
+  | :End:                                                                 |
+  |-----------------------------------------------------------------------|
+  | To set file-specific source-block settings put this to the top:       |
+  | #+PROPERTY:   header-args :eval never-export                          |
+  |-----------------------------------------------------------------------|
+  | cua-mode                                                              |
+  |-----------------------------------------------------------------------|
+  | 1. Activate cua-mode                                                  |
+  | 2. Move point to beginning of rect and press c-ret                    |
+  | 3. Move point to end of rect and press M-i                            |
