@@ -90,6 +90,27 @@
    select * from testtable where id=1\G --display columns nicely; for tables with many columns
    #+END_SRC
 
+* Oracle
+
+** Free up disk-space
+   Source: https://uhesse.com/2011/06/01/adrci-a-survival-guide-for-the-dba/
+
+   #+BEGIN_SRC sh
+[oracle@uhesse ~]$ adrci
+
+ADRCI: Release 11.2.0.2.0 - Production on Wed Jun 1 10:20:08 2011
+
+Copyright (c) 1982, 2009, Oracle and/or its affiliates.  All rights reserved.
+
+ADR base = "/u01/app/oracle"
+adrci> show home
+ADR Homes:
+diag/tnslsnr/uhesse/listener
+diag/rdbms/orcl/orcl
+adrci> purge -age 2880 -type trace
+adrci> show tracefile -rt
+   #+END_SRC
+
 * Package management
 ** RPM
    Differences in software architectures:
@@ -117,6 +138,7 @@
     yum install yum-downloadonly
     yum install --downloadonly --downloaddir=<directory> <package>
     #+END_SRC
+
 * Proxy settings
    Proxy for cpan
    #+BEGIN_SRC sh
@@ -205,7 +227,7 @@ git config --global http.sslVerify false
 
 ** Fix: GNU TLS Error on clone
    :PROPERTIES:
-   :dir:      /sshx:root@10.120.113.86:
+   :dir:      /sshx:root@10.120.113.56:
    :END:
    The error message:
    #+BEGIN_SRC sh
@@ -215,7 +237,7 @@ git config --global http.sslVerify false
    error: gnutls_handshake() failed: A TLS packet with unexpected length was received. while accessing https://tfs.somesite.com
    #+END_SRC
 
-   Fix on ubuntu:
+   Fix on ubuntu (1/2) (should work unattended):
    #+BEGIN_SRC sh :results raw drawer
    # public key errors might occur, therefor we nee refreshen our key-db with the following 2 commands
    apt-key update
@@ -229,14 +251,17 @@ git config --global http.sslVerify false
    apt-get build-dep git -y
    apt-get install libcurl4-openssl-dev -y
    dpkg-source -x git_*.dsc
-   cd git*
+   #+END_SRC
+
+   Fix on ubuntu (2/2) (requires manual file editing):
+   #+BEGIN_SRC sh :results raw drawer
+   cd ~/git-openssl/git*
    # edit debian/control file and replace all instances of “libcurl4-gnutls-dev” with “libcurl4-openssl-dev” (I used sudo vim debian/control) using vim: :%s/libcurl4-gnutls-dev/libcurl4-openssl-dev/gc
    # remove the line TEST=test from the file debian/rules or it will take AGES to compile (I used sudo vim debian/rules to edit the file)
    # can i remove the ASCII generation, too? i dont need these docs
    dpkg-buildpackage -rfakeroot -b
    sudo dpkg -i ../git_*_amd64.deb
    #+END_SRC
-
 
 * Mailing
 ** Fetchmail
