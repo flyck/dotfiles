@@ -227,7 +227,7 @@ git config --global http.sslVerify false
 
 ** Fix: GNU TLS Error on clone
    :PROPERTIES:
-   :dir:      /sshx:root@10.120.113.56:
+   :dir:      /sshx:root@192.168.192.204:
    :END:
    The error message:
    #+BEGIN_SRC sh
@@ -245,12 +245,12 @@ git config --global http.sslVerify false
    # remove git
    apt-get remove git -y
    apt-get install build-essential fakeroot dpkg-dev -y
-   mkdir ~/git-openssl
+   mkdir -p ~/git-openssl
    cd ~/git-openssl
    apt-get source git
    apt-get build-dep git -y
    apt-get install libcurl4-openssl-dev -y
-   dpkg-source -x git_*.dsc
+   #dpkg-source -x git_*.dsc
    #+END_SRC
 
    Fix on ubuntu (2/2) (requires manual file editing):
@@ -318,6 +318,18 @@ git config --global http.sslVerify false
    mpssh -f ~/banks.txt -v "uptime"
    #+END_SRC
 
+* Firewall
+** Selinux
+   Some quick commands:
+   #+BEGIN_SRC sh
+   # check information comming from selinux:
+   tail /var/log/audit/audit.log
+   # audit2allow tool is part of the following package (turns audit logs to allow-policies):
+   yum install setroubleshoot
+   # loglevel erhöhen:
+   semodule -DB
+   #+END_SRC
+
 * vSphere
 ** Increase VM disk-space
    1) Delete snapshots (need permission of people in charge for this)
@@ -361,6 +373,17 @@ git config --global http.sslVerify false
    #+BEGIN_SRC sh
    mount -t iso9660 /dev/scd0 /media/cdrom/
    #+END_SRC
+
+** Screen
+
+*** Howto install screen on Oracle Linux 6.X
+    1) Download final package sources from here: http://ftp.gnu.org/gnu/screen/
+    2) Install required packages
+       #+BEGIN_SRC sh
+       yum remove screen # remove the preinstalled screen version
+       yum install ncurses-devel # fixes the termcap error you might get
+       yum install gcc # fixes a whole bunch of requirement errors
+       #+END_SRC
 
 ** find, grep or sed goodies
    #+BEGIN_SRC sh
