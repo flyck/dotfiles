@@ -1,0 +1,100 @@
+#+Title:  The Cheatsheet
+#+Author: Felix Brilej
+#+Options: toc:nil
+#+OPTIONS: html-postamble:nil
+#+HTML_HEAD:  <link rel="stylesheet" type="text/css" href="styles\\base.css" />
+
+* Bash
+** General commands
+   | Command     | Description                                                                                |
+   |-------------+--------------------------------------------------------------------------------------------|
+   | M-Backspace | Kill word backward from point                                                              |
+   | C-_         | Undo                                                                                       |
+   | M-space     | Mark                                                                                       |
+   | C-x C-x     | Exchange point and mark (only for current row, is not saved along with command in history) |
+   | ESC 10 f    | Prefix key, inserts ffffffffff                                                             |
+   | !!          | show previous command and execute it                                                       |
+   | !-1 (!-x)   | Show previous command and execute it                                                       |
+   | C-t         | switch character before and at cursor                                                      |
+   | M-t         | switch word before and after cursor                                                        |
+** Screen tricks
+   | Command   | Description     |
+   |-----------+-----------------|
+   | C-a d     | minimize screen |
+   | screen -R | maximize screen |
+   | C-a \     | exit screen     |
+
+* Emacs
+** Commands
+   | Command     | Description                                  |
+   |-------------+----------------------------------------------|
+   | M-S-;       | Toggle comment                               |
+   | C-x h       | mark buffer                                  |
+   | M-h         | mark paragraph                               |
+   | C-c C-x C-d | Show timers behind tasks (org-clock-display) |
+   |-------------+----------------------------------------------|
+   | org-agenda  |                                              |
+   |-------------+----------------------------------------------|
+   | b           | switch to previous week                      |
+   | b           | switch to next week                          |
+   | C a L       | Show scheduled tasks                         |
+   | C a n       | Show scheduled, then unscheduled tasks       |
+   |-------------+----------------------------------------------|
+
+** List of tips
+   | Tips                                                                  |
+   |-----------------------------------------------------------------------|
+   | Org-mode                                                              |
+   |-----------------------------------------------------------------------|
+   | write in the past, makes more sense to other people who read it later |
+   |-----------------------------------------------------------------------|
+   | Startup visibility for one headline:                                  |
+   | :Properties:                                                          |
+   | :Visibility: children (content/all)                                   |
+   | :End:                                                                 |
+   |-----------------------------------------------------------------------|
+   | To set file-specific source-block settings put this to the top:       |
+   | #+PROPERTY:   header-args :eval never-export                          |
+   |-----------------------------------------------------------------------|
+   | cua-mode                                                              |
+   |-----------------------------------------------------------------------|
+   | 1. Activate cua-mode                                                  |
+   | 2. Move point to beginning of rect and press c-ret                    |
+   | 3. Move point to end of rect and press M-i                            |
+
+* Vim
+** General commands
+ | Command        | Description                                                  |
+ |----------------+--------------------------------------------------------------|
+ | hjkl           | use these to move                                            |
+ | x              | delete character at point                                    |
+ | A              | enter insert mode after current line                         |
+ | C-c            | exit insert-mode                                             |
+ | :e filename    | edit another file                                            |
+ | gf             | open file at point                                           |
+ | zz             | center the screen                                            |
+ | S-zz           | save file and exit                                           |
+ | :%s/foo/gar/gc | replace every foo with bar in current file with confirmation |
+ | C-F            | page down                                                    |
+ | C-B            | page up                                                      |
+ |----------------+--------------------------------------------------------------|
+ | C-w v          | split the window vertically                                  |
+ | C-w s          | split the window horizontically                              |
+ | C-w q          | close the current window                                     |
+ | C-w C-w        | jump to next window                                          |
+ | C-w arrow      | jump to window in arrow-direction                            |
+ |----------------+--------------------------------------------------------------|
+
+** Commands defined in my .vimrc
+ | Command | Description                           |
+ |---------+---------------------------------------|
+ | M-p     | switch current line with previous one |
+ | M-n     | switch current line with next one     |
+
+** Workflows
+   - Comment / Uncomment a selection of lines
+     1. move to the beginning of intended selection
+     2. C-V (enter visual mode)
+     3. move to the end of the intended selection
+     4. S-I # C-c
+     5. Give it a second
