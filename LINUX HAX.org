@@ -339,7 +339,11 @@ git config --global http.sslVerify false
       fdisk -l
       # The disk that doesnt have a valid partition table is the one we just added
       #+END_SRC
-   4) Format the identified disk
+      - SCSI bus might need to be rescanned, therefor do the following:
+        #+BEGIN_SRC sh
+        echo "- - -" > /sys/class/scsi_host/hostX/scan #do this for all hosts in hopes to find the correct one
+        #+END_SRC
+   4) Format the identified disk (optional, disk partition is not necessary for data-only disks)
       #+BEGIN_SRC sh
       fdisk /dev/identified_disk
       #+END_SRC
@@ -353,15 +357,27 @@ git config --global http.sslVerify false
       - Hex Code: 8e for Linux LVM
       - "w" to write the changes and exit
    5) Check on those changes by firing um fdisk again
-   6) Add the newly created disk to LVM
+      #+BEGIN_SRC sh
+      fdisk -l
+      #+END_SRC
+   6) Add the newly created disk to the volumegroup
       - pvcreate <disk>
       - vgdisplay
       - vgextend <volumegroup> <disk>
       - pvscan
-   7) Increase the size of the LVM group to the now maximal possible size
-      - lvdisplay
-      - lvextend <volumegroup> <disk>
-      - resize2fs <volumegroup>
+   7) Add the added space to the volumepath
+      - Extend the volumepath
+        #+BEGIN_SRC sh
+        lvdisplay
+        lvextend <volumepath> <disk>
+        # alternatively:
+        lvextend -l +100%FREE -n <volumepath>
+        #+END_SRC
+      - For extX file systems fire up the following:
+        #+BEGIN_SRC sh
+        resize2fs <volumepath>
+        #+END_SRC
+
 ** Eth0 configuration after vmware clone
    vim /etc/udev/rules.d/70-persistent-net.rules
    be carefull when more than one adapter is present. otherwise:
