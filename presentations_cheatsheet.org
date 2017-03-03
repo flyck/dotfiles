@@ -1,5 +1,7 @@
-#+Title:  Presentations Cheatsheet
-#+Author: Felix Brilej
+#+Title:   Presentations Cheatsheet
+#+Author:  Felix Brilej
+#+Options: toc:nil num:nil \n:nil
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="styles/base.css" />
 
 * Preparation
   - Start a clock in the beginning of the talk (see [[Timing]])
