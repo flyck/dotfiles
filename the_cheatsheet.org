@@ -26,20 +26,21 @@
 
 * Emacs
 ** Commands
-   | Command     | Description                                  |
-   |-------------+----------------------------------------------|
-   | M-S-;       | Toggle comment                               |
-   | C-x h       | mark buffer                                  |
-   | M-h         | mark paragraph                               |
-   | C-c C-x C-d | Show timers behind tasks (org-clock-display) |
-   |-------------+----------------------------------------------|
-   | org-agenda  |                                              |
-   |-------------+----------------------------------------------|
-   | b           | switch to previous week                      |
-   | b           | switch to next week                          |
-   | C a L       | Show scheduled tasks                         |
-   | C a n       | Show scheduled, then unscheduled tasks       |
-   |-------------+----------------------------------------------|
+   | Command           | Description                                  |
+   |-------------------+----------------------------------------------|
+   | M-S-;             | Toggle comment                               |
+   | C-x h             | mark buffer                                  |
+   | M-h               | mark paragraph                               |
+   | C-c C-x C-d       | Show timers behind tasks (org-clock-display) |
+   | M-x rename-buffer | rename buffer, useful for similar files      |
+   |-------------------+----------------------------------------------|
+   | org-agenda        |                                              |
+   |-------------------+----------------------------------------------|
+   | b                 | switch to previous week                      |
+   | b                 | switch to next week                          |
+   | C a L             | Show scheduled tasks                         |
+   | C a n             | Show scheduled, then unscheduled tasks       |
+   |-------------------+----------------------------------------------|
 
 ** List of tips
    | Tips                                                                  |
