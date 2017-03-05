@@ -1,9 +1,9 @@
 #+Title:  System-Administration Cheatsheet
 #+Author: Felix Brilej
 
-* Eine Online-Applikation austauschen
-** Vorbereitung
-*** Technisch
+* Replacing an Online-Application
+** Preparation
+*** Technical
     - Spezifikationen des alten Systems herausfinden
     - Spezifikationen des alten Systems beim neuen System implementieren
     - Das neue System zur genüge Testen
@@ -11,9 +11,11 @@
       - Mit welchem der Teilschritte des Austausches kenne ich mich wenig aus?
       - Wer kann mir in einem solchen Fall weiterhelfen?
       - Gibt es ein Backup dieser Teilkomponente mit der ich mich nicht auskenne?
-*** Menschlich
+
+*** Personal
     - Die Benutzer über die Veränderung der Software ein paar Tage vorher informieren
     - Eventuell eine Schulung durchführen
+
 ** Durchführung
    1. Downtime der Applikation ankündigen
    2. Die Online-Applikation austauschen (bspw. durch Umstellen von Links)
@@ -21,9 +23,11 @@
       deren Seite läuft wie geplant
       - Man kann nicht alles planen, daher lohnt sich hier die Überprüfung
    4. Das Alte System ausschalten
+
 ** Nachgang
    - Kritik bei Benutzern erfragen
    - Dieses Dokument erweitern
+
 * Große Upgrades auf einem System
   Informationen zum Update?
   - Was wird bei einem Update tatsächlich gemacht?
@@ -66,4 +70,18 @@
    3. Diese Aufgaben priorisieren
       - Dadurch fühle ich mich beim abarbeiten besser solange ich mich an die festgelegten
         Prioritäten halte
+
+* Slow performance toolkit
+  Using the terminal:
+  #+BEGIN_SRC sh
+  df -h #check if disk-space is available
+  df -i #show inodes as additional information
+  free -mh #show RAM and swap
+  #+END_SRC
+
+  Using vSphere:
+  - Check the VMs "Perfomance"-Tab, the CPU and RAM specifically
+  - Check the Hypervisors "Performance"-Tab (sort by hosts and clusters)
+  - Check the used Storages for Warnings
+
 * TODO Translate this to english

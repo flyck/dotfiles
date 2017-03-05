@@ -49,6 +49,9 @@
    |-----------------------------------------------------------------------|
    | write in the past, makes more sense to other people who read it later |
    |-----------------------------------------------------------------------|
+   | Execute ~org-lint~ for debugging of source-blocks.                      |
+   | Helpful when exporting produces errors.                               |
+   |-----------------------------------------------------------------------|
    | Startup visibility for one headline:                                  |
    | :Properties:                                                          |
    | :Visibility: children (content/all)                                   |

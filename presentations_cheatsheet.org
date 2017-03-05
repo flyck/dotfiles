@@ -1,0 +1,32 @@
+#+Title:   Presentations Cheatsheet
+#+Author:  Felix Brilej
+#+Options: toc:nil num:nil \n:nil
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="styles/base.css" />
+
+* Preparation
+  - Start a clock in the beginning of the talk (see [[Timing]])
+  - Be there 10 Minutes early
+    - Check Internet Connection (optional)
+    - Check readablity of slides (quick fix: change color theme?)
+  - Start a video recording to enable proper feedback (optional)
+
+* Timing
+  - Figure out on which slide you should progress however far
+    - Cut off a topic at a certain point once the bulletpoints are done
+
+* Slides
+  Style:
+  - Up to 5 bullet points per slide at best
+
+  Content:
+  - Have in mind which topics would be "advanced" and which ones would be considered "basic", this
+    gives you the ability to cut off topics after the basics are done when you run out of time
+
+* The Introduction
+  - Talk about the pursued outcome of the talk, should be up to three bullet points using easy
+    language
+    - Focus on this part before the talk, the simplicity of the pursued outcome also calms me down
+      as the presentor
+
+* Feedback
+  - Have pen and paper ready to take feedback / critizism (optional)
