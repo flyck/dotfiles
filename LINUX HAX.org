@@ -181,23 +181,20 @@ adrci> show tracefile -rt
    git config --global user.name "username"
    git config --global user.email mailaddress
    git config --global http.proxy http://172.16.8.250:3128
+   git config --global core.autocrlf false #Leave all line-ending business to the user
    #+END_SRC
+
    Show general information required by git
    #+BEGIN_SRC sh
    git config user.name
    git config user.email
    git config http.proxy
-   Fix: Local SSL issuer certificate error
-
-Alternative: install that ssl certificate, probably the more advanced solution
-
-git config --global http.sslVerify false
-
    #+END_SRC
 
-   Leave all line-ending business to the user
+   Fixes this error: "Local SSL issuer certificate error"
+   - Alternatively i could just install that ssl certificate, probably the more advanced solution
    #+BEGIN_SRC sh
-   git config --global core.autocrlf false
+   git config --global http.sslVerify false
    #+END_SRC
 
    Install ssh key
