@@ -51,8 +51,10 @@
   #+END_SRC
 
 ** Change hostname 								     :Ubuntu:
+   Change these files:
    - /etc/hosts (fqdn, then shorthostname, seperated via tab)
    - /etc/hostname (short hostname)
+
 ** chkconfig 									     :Ubuntu:
    #+BEGIN_SRC sh
    #equivalents to these:
@@ -64,7 +66,11 @@
    #+END_SRC
 
 ** /boot Partition full 							     :Ubuntu:
-   fire up this multiple times: sudo apt-get autoremove
+   fire this up multiple times
+   #+BEGIN_SRC sh
+   sudo apt-get autoremove
+   #+END_SRC
+
 * MySQL
    What to do when you cant start mysql as root (maybe not exactly right)
    #+BEGIN_SRC sh
@@ -143,6 +149,13 @@ adrci> show tracefile -rt
    #Update a package with a new rpm in the current directory
    rpm -U local_upgrade.rpm
    #+END_SRC
+** Apt
+*** Hold back packages, to prevent updates
+    For me this was useful to prevent apt from overwriting me self-compiled git.
+    #+BEGIN_SRC sh
+    sudo apt-mark hold <package>
+    sudo apt-mark showhold
+    #+END_SRC
 
 ** Yum
 *** Only download packages via yum
