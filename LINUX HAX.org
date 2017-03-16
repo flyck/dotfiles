@@ -40,6 +40,18 @@
    yum --disablerepo=epel -y update  ca-certificates
    #+END_SRC
 
+** Add epel repository
+   Taken from: http://www.tecmint.com/how-to-enable-epel-repository-for-rhel-centos-6-5/
+   At work we use Oracle Linux 6.7, so the following is of importance
+   #+BEGIN_SRC sh
+## RHEL/CentOS 6 32-Bit ##
+# wget http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+# rpm -ivh epel-release-6-8.noarch.rpm
+## RHEL/CentOS 6 64-Bit ##
+# wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+# rpm -ivh epel-release-6-8.noarch.rpm
+   #+END_SRC
+
 * Ubuntu
   Move windows: control-windows arrow
   Ubuntu repository direction: /etc/apt/sources.list
@@ -115,18 +127,6 @@ diag/tnslsnr/uhesse/listener
 diag/rdbms/orcl/orcl
 adrci> purge -age 2880 -type trace
 adrci> show tracefile -rt
-   #+END_SRC
-
-** Add epel repository
-   Taken from: http://www.tecmint.com/how-to-enable-epel-repository-for-rhel-centos-6-5/
-   At work we use Oracle Linux 6.7, so the following is of importance
-   #+BEGIN_SRC sh
-## RHEL/CentOS 6 32-Bit ##
-# wget http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
-# rpm -ivh epel-release-6-8.noarch.rpm
-## RHEL/CentOS 6 64-Bit ##
-# wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-# rpm -ivh epel-release-6-8.noarch.rpm
    #+END_SRC
 
 * Package management
