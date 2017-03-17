@@ -407,114 +407,6 @@ adrci> show tracefile -rt
 
 * Basics
   Handy tool to analyze full disks: ncdu
-** Mount a cd
-   #+BEGIN_SRC sh
-   mount -t iso9660 /dev/scd0 /media/cdrom/
-   #+END_SRC
-
-** Screen
-
-*** Howto install screen on Oracle Linux 6.X
-    1) Download final package sources from here: http://ftp.gnu.org/gnu/screen/
-    2) Install required packages
-       #+BEGIN_SRC sh
-       yum remove screen # remove the preinstalled screen version
-       yum install ncurses-devel # fixes the termcap error you might get
-       yum install gcc # fixes a whole bunch of requirement errors
-       #+END_SRC
-
-** find, grep or sed goodies
-   #+BEGIN_SRC sh
-   find -type f -exec sed -i -e 's/sqlplus/sqlplus64/g' {} \;
-   #search for string in current directory
-   grep -R 'string' dir/
-   #+END_SRC
-
-** Logrotate
-   Example from AGerler:
-   #+BEGIN_SRC sh
-   cat /etc/logrotate.d/fetchmail
-   /var/log/fetchmail.log {
-
-   weekly
-   create 0644 rtracker adm
-   rotate 4
-   compress
-
-   delaycompress
-   }
-   #+END_SRC
-   - weekly: time interval
-   - create: chmod parameter, owner und group
-   - rotate: Amount of "rotates" a logfile persists before it gets deleted
-   - compress: whether the log file should be zipped or not
-   - delaycompress: the log only gets zipped after the rotation has been completed (file-handle reasons)
-
-** Filter a log-file for errors / warnings
-   grep -iE "(warning|error|critical)" /var/log/fetchmail.log
-
-** Find out Mac-Address for a different System
-   Prerequesite: Have another system in the same subnet (we call it System A)
-   #+BEGIN_SRC sh
-#From system A
-arp -a
-#nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
-#Ping them once from System A
-ping system_b_IP
-#Again from system A
-arp -a
-nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
-? (system_b_IP) at 00:0c:29:46:b5:55 [ether] on eth0
-   #+END_SRC
-
-** Show all processes that run under a certain user
-   #+BEGIN_SRC sh
-   ps -ef | grep certain_user
-   #+END_SRC
-
-** Change the timezone
-   #+BEGIN_SRC sh
-   cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
-   #+END_SRC
-** Unpack a .tar.gz file
-   #+BEGIN_SRC sh
-   tar -xvzf datei.tar.gz #(-x extract, -v verbose output, -f file to be unpacked, -z erst gzip, dann tar)
-   #+END_SRC
-
-** Copy files between systems (rsync)
-   rsync -avz ursprung root@192.168.0.1:/ziel/
-
-** Monitor a process that times out
-   #+BEGIN_SRC sh
-   strace -f pid-file (child-threads followen) (not confirmed)
-   #+END_SRC
-   Short of that, you can always look in the process init script. For instance, the SSH daemon is
-   started with the script in /etc/init.d/sshd. Sometimes the PID will be defined there (search
-   for pid, PID, PIDFILE, PID_FILE, etc.).  For anything that sources /etc/init.d/functions, the
-   PID will live in /var/run/*.pid.
-
-** PS1 Config
-   :PROPERTIES:
-   :dir:      /sshx:root@10.120.113.42:
-   :END:
-   #+BEGIN_SRC sh
-   #bin/bash commandline setting (put into ~/.bashrc):
-   export PS1='\[\033[33m\]\u@\H:\w \[\033[m\]'
-   #+END_SRC
-
-** Cronjobs
-   Achtung! Cronjobs starten jede Minute neu und senden entsprechende report-Mails an verschiedene
-   User sollte es bei der Ausführung einen Fehler gegeben haben
-
-   Logging anschalten:
-   #+BEGIN_SRC sh
-   59 23 * * * /home/john/bin/backup.sh > /home/john/logs/backup.log 2>&1
-   #+END_SRC
-
-** Change a network config safely
-   Use the "at"-tool to reset the config after 5 minutes (at-jobs).
-   Useful for ipconfig or firewall config-changes to ensure connectivity.
-
 ** /bin/bash
 *** ls
     Nur die Dateigröße mit Dateinamen anzeigen
@@ -555,6 +447,26 @@ nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
     firefox &
     firefox #now press C-z
     #+END_SRC
+** Change a network config safely
+   Use the "at"-tool to reset the config after 5 minutes (at-jobs).
+   Useful for ipconfig or firewall config-changes to ensure connectivity.
+
+** Change the timezone
+   #+BEGIN_SRC sh
+   cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+   #+END_SRC
+** Copy files between systems (rsync)
+   rsync -avz ursprung root@192.168.0.1:/ziel/
+
+** Cronjobs
+   Achtung! Cronjobs starten jede Minute neu und senden entsprechende report-Mails an verschiedene
+   User sollte es bei der Ausführung einen Fehler gegeben haben
+
+   Logging anschalten:
+   #+BEGIN_SRC sh
+   59 23 * * * /home/john/bin/backup.sh > /home/john/logs/backup.log 2>&1
+   #+END_SRC
+
 ** Debugging of Binaries
    To debug binaries that misbehave and dont give obvious logs try the following:
    - Look in the system messages log (/var/log/messages)
@@ -563,6 +475,71 @@ nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
      strace -pid <PID> -f
      #+END_SRC
    - Debug the binary with gdb (u are going pretty deep in here)
+** Filter a log-file for errors / warnings
+   grep -iE "(warning|error|critical)" /var/log/fetchmail.log
+
+** Find out Mac-Address for a different System
+   Prerequesite: Have another system in the same subnet (we call it System A)
+   #+BEGIN_SRC sh
+#From system A
+arp -a
+#nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
+#Ping them once from System A
+ping system_b_IP
+#Again from system A
+arp -a
+nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
+? (system_b_IP) at 00:0c:29:46:b5:55 [ether] on eth0
+   #+END_SRC
+
+** find, grep or sed goodies
+   #+BEGIN_SRC sh
+   find -type f -exec sed -i -e 's/sqlplus/sqlplus64/g' {} \;
+   #search for string in current directory
+   grep -R 'string' dir/
+   #+END_SRC
+
+** Install cpan modules with dependencies
+   #+BEGIN_SRC sh
+   perl -MCPAN -e 'my $c = "CPAN::HandleConfig";
+   $c->load(doit => 1, autoconfig => 1);
+   $c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes");
+   $c->commit'
+   #+END_SRC
+** Logrotate
+   Example from AGerler:
+   #+BEGIN_SRC sh
+   cat /etc/logrotate.d/fetchmail
+   /var/log/fetchmail.log {
+
+   weekly
+   create 0644 rtracker adm
+   rotate 4
+   compress
+
+   delaycompress
+   }
+   #+END_SRC
+   - weekly: time interval
+   - create: chmod parameter, owner und group
+   - rotate: Amount of "rotates" a logfile persists before it gets deleted
+   - compress: whether the log file should be zipped or not
+   - delaycompress: the log only gets zipped after the rotation has been completed (file-handle reasons)
+
+** Monitor a process that times out
+   #+BEGIN_SRC sh
+   strace -f pid-file (child-threads followen) (not confirmed)
+   #+END_SRC
+   Short of that, you can always look in the process init script. For instance, the SSH daemon is
+   started with the script in /etc/init.d/sshd. Sometimes the PID will be defined there (search
+   for pid, PID, PIDFILE, PID_FILE, etc.).  For anything that sources /etc/init.d/functions, the
+   PID will live in /var/run/*.pid.
+
+** Mount a cd
+   #+BEGIN_SRC sh
+   mount -t iso9660 /dev/scd0 /media/cdrom/
+   #+END_SRC
+
 ** Port Analysis
    Look at opened ports:
    #+BEGIN_SRC sh
@@ -575,12 +552,45 @@ nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
    netstat -tapen | grep
    #+END_SRC
 
-** Install cpan modules with dependencies
+** PS1 Config
+   :PROPERTIES:
+   :dir:      /sshx:root@10.120.113.42:
+   :END:
    #+BEGIN_SRC sh
-   perl -MCPAN -e 'my $c = "CPAN::HandleConfig";
-   $c->load(doit => 1, autoconfig => 1);
-   $c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes");
-   $c->commit'
+   #bin/bash commandline setting (put into ~/.bashrc):
+   export PS1='\[\033[33m\]\u@\H:\w \[\033[m\]'
+   #+END_SRC
+
+** Rename filenames to be more convenient
+   Lowercase filenames
+   #+BEGIN_SRC sh
+   for i in *; do mv $i `echo $i | tr [:upper:] [:lower:]`; done
+   #+END_SRC
+
+   Replace blanks in filenames with _
+   #+BEGIN_SRC sh
+   for i in *; do mv "${i}" `echo ${i} | sed 's/ /_/g'`; done
+   #+END_SRC
+
+** Screen
+
+*** Howto install screen on Oracle Linux 6.X
+    1) Download final package sources from here: http://ftp.gnu.org/gnu/screen/
+    2) Install required packages
+       #+BEGIN_SRC sh
+       yum remove screen # remove the preinstalled screen version
+       yum install ncurses-devel # fixes the termcap error you might get
+       yum install gcc # fixes a whole bunch of requirement errors
+       #+END_SRC
+
+** Show all processes that run under a certain user
+   #+BEGIN_SRC sh
+   ps -ef | grep certain_user
+   #+END_SRC
+
+** Unpack a .tar.gz file
+   #+BEGIN_SRC sh
+   tar -xvzf datei.tar.gz #(-x extract, -v verbose output, -f file to be unpacked, -z erst gzip, dann tar)
    #+END_SRC
 * Debugging tools
   http://brendangregg.com/ebpf.html
