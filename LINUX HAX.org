@@ -125,6 +125,7 @@ adrci> show home
 ADR Homes:
 diag/tnslsnr/uhesse/listener
 diag/rdbms/orcl/orcl
+adrci> set homepath <insert one of the ADR homes>
 adrci> purge -age 2880 -type trace
 adrci> show tracefile -rt
    #+END_SRC
@@ -314,6 +315,16 @@ adrci> show tracefile -rt
    #+BEGIN_SRC sh
    openssl x509 -inform der -in certificate.cer -out certificate.pem
    #+END_SRC
+
+* Perl
+  List all of a modules dependencies with just a one liner.
+
+  Requires that Devel::Modlist is installed.
+
+  #+BEGIN_SRC sh
+  perl -d -MDevel::Modlist=nocore script.pl
+  #+END_SRC
+
 * SSH
 ** Realize password-less login via ssh-key from one to another system
    1) ssh root@alpha
@@ -433,12 +444,16 @@ adrci> show tracefile -rt
     #+END_SRC
 
 *** Change bash prompt expression
+    Put one of the following settings in ~/.bashrc
     #+BEGIN_SRC sh
     # yellow (for non-root users)
     export PS1='\[\033[33m\]\u@\H:\w \[\033[m\]'
     # red (for root)
     export PS1='\[\033[1;31m\]\u@\H:\w \[\033[m\]'
     #+END_SRC
+
+    More good examples
+    - https://www.cyberciti.biz/faq/bash-shell-change-the-color-of-my-shell-prompt-under-linux-or-unix/
 
 *** Open process in background
     There are multiple solutions for this, it might be interesting looking into this indepth
@@ -456,7 +471,12 @@ adrci> show tracefile -rt
    cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
    #+END_SRC
 ** Copy files between systems (rsync)
+   more useful examples: http://www.tecmint.com/rsync-local-remote-file-synchronization-commands/
+
+   #+BEGIN_SRC sh
    rsync -avz ursprung root@192.168.0.1:/ziel/
+   #+END_SRC
+
 
 ** Cronjobs
    Achtung! Cronjobs starten jede Minute neu und senden entsprechende report-Mails an verschiedene
@@ -550,15 +570,6 @@ nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
    #+BEGIN_SRC sh
    # Use a grep filter here because you will be getting way too much
    netstat -tapen | grep
-   #+END_SRC
-
-** PS1 Config
-   :PROPERTIES:
-   :dir:      /sshx:root@10.120.113.42:
-   :END:
-   #+BEGIN_SRC sh
-   #bin/bash commandline setting (put into ~/.bashrc):
-   export PS1='\[\033[33m\]\u@\H:\w \[\033[m\]'
    #+END_SRC
 
 ** Rename filenames to be more convenient
