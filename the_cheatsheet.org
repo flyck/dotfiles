@@ -102,3 +102,5 @@
      3. move to the end of the intended selection
      4. S-I # C-c
      5. Give it a second
+** Cheatsheets
+   - http://www.lagmonster.org/docs/vi2.html
