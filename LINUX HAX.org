@@ -83,6 +83,112 @@
    sudo apt-get autoremove
    #+END_SRC
 
+* Icinga Monitoring
+  Nrpe Tipps:
+  - https://docs.icinga.com/latest/de/nrpe.html#icingaserverdefinitions
+
+** Check multiple disks at once
+   This assumes an nrpe setup is already at place and only this check has to be added.
+   It also requires the file check_multi at ~/usr/lib64/nagios/plugins/~ with execute permissions.
+   - Download it here: https://github.com/flackem/check_multi (?)
+
+   #+BEGIN_SRC sh
+   # check if multiple disks are attached at all
+   df -h # df -l if df -h doesnt respond
+   # check if check_multi config file exists
+   cat /etc/nagios/check_multi_disk.cmd
+   # make sure this exists in /etc/nagios/nrpe.cfg:
+   command[check_disk]=/usr/lib64/nagios/plugins/check_multi -f /etc/nagios/check_multi_disk.cmd -r 32
+   # check the command locally:
+   /usr/lib64/nagios/plugins/check_nrpe -H localhost -c check_disk
+   /usr/lib64/nagios/plugins/check_nrpe -H 127.0.0.1 -c check_disk #alternative for ssl handshake error
+   #+END_SRC
+
+   Example content of /etc/nagios/check_multi_disk.cmd
+   #+BEGIN_SRC sh
+   command[disk1]=/usr/lib64/nagios/plugins/check_disk -w 20% -c 10% -p /
+   command[disk2]=/usr/lib64/nagios/plugins/check_disk -w 20% -c 10% -p /home
+   command[disk3]=/usr/lib64/nagios/plugins/check_disk -w 20% -c 10% -p /boot
+   #+END_SRC
+
+   What to check? Basically everything that starts with /dev:
+   #+BEGIN_SRC sh
+   [root@somehost-blade1 ~]# df -h | grep ^/dev
+   /dev/mapper/ol_somehost--blade1-root   50G  6.9G   44G  14% /
+   /dev/mapper/ol_nhhbc015--blade1-home  225G   94M  225G   1% /home
+   /dev/sda1                             497M  168M  330M  34% /boot
+   #+END_SRC
+
+** Basics nrpe setup using xinetd
+*** Requirements on the monitoring-host
+    Required for the localhost template to work that comes with the icinga installation
+    #+BEGIN_SRC sh
+      yum install nagios-plugins-all
+    #+END_SRC
+
+    In order to trigger remote nagios-plugins this package is necessary
+    #+BEGIN_SRC sh
+      yum install nagios-plugins-nrpe
+    #+END_SRC
+
+*** Requirements on each client
+    Install these packages. Nagios-plugins-all is an overkill, but it is really small so its okay.
+    #+BEGIN_SRC sh :results silent
+      yum install -y nrpe nagios-plugins-nrpe nagios-plugins-all xinetd
+    #+END_SRC
+
+    ~/etc/xinetd.d/nrpe~ has to exist in a specific way:
+    #+BEGIN_SRC sh
+      cat << EOF > /etc/xinetd.d/nrpe
+      # default: off
+      # description: NRPE (Nagios Remote Plugin Executor)
+      service nrpe
+      {
+              flags           = REUSE
+              socket_type     = stream
+              type            = UNLISTED
+              port            = 5666
+              wait            = no
+              user            = nagios
+              group           = nagios
+              server          = /usr/sbin/nrpe
+              server_args     = -c /etc/nagios/nrpe.cfg --inetd
+              log_on_failure  += USERID
+              disable         = no
+              only_from       = 127.0.0.1 monitoring-server
+      }
+      EOF
+    #+END_SRC
+
+    Restarting xinetd is required
+    #+BEGIN_SRC sh :results drawer
+    chkconfig xinetd on
+    service xinetd restart
+    #+END_SRC
+
+    Check if the setup works locally
+    #+BEGIN_SRC sh
+    /usr/lib64/nagios/plugins/check_nrpe -H localhost -c check_disk
+    /usr/lib64/nagios/plugins/check_nrpe -H 127.0.0.1 -c check_disk #alternative for ssl handshake error
+    #+END_SRC
+
+
+**** Add iptables exception
+     If a connection using telnet on port 22 is possible, but port 5666 shows "no route to host"
+     the reason is probably an iptables-rule.
+
+     Check current Iptables rules:
+     #+BEGIN_SRC sh
+     iptables --list
+     #+END_SRC
+
+     Works on Centos 7:
+     #+BEGIN_SRC sh
+     iptables -A INPUT -s monitoring-server -p tcp -m tcp --dport 5666 -m state --state NEW,ESTABLISHED -j ACCEPT
+     yum install iptables-services
+     service iptables reload
+     #+END_SRC
+
 * MySQL
    What to do when you cant start mysql as root (maybe not exactly right)
    #+BEGIN_SRC sh
@@ -477,7 +583,6 @@ adrci> show tracefile -rt
    rsync -avz ursprung root@192.168.0.1:/ziel/
    #+END_SRC
 
-
 ** Cronjobs
    Achtung! Cronjobs starten jede Minute neu und senden entsprechende report-Mails an verschiedene
    User sollte es bei der Ausführung einen Fehler gegeben haben
@@ -554,6 +659,12 @@ nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
    started with the script in /etc/init.d/sshd. Sometimes the PID will be defined there (search
    for pid, PID, PIDFILE, PID_FILE, etc.).  For anything that sources /etc/init.d/functions, the
    PID will live in /var/run/*.pid.
+
+** Shrink a logfile
+   Reduce a logfile to its last 200 lines while preserving the access rights.
+   #+BEGIN_SRC sh
+   logfile="/path/to/logfile"; echo "$(tail -n 200 $logfile)" > $logfile
+   #+END_SRC
 
 ** Mount a cd
    #+BEGIN_SRC sh
