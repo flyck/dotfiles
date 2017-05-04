@@ -104,3 +104,5 @@
      5. Give it a second
 ** Cheatsheets
    - http://www.lagmonster.org/docs/vi2.html
+   - http://zzapper.co.uk/vimtips.html
+   - (also check out the vim poster in this directory)
