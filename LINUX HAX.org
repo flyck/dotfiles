@@ -300,6 +300,8 @@ adrci> show tracefile -rt
    #+BEGIN_SRC sh
    git config --global user.name "username"
    git config --global user.email mailaddress
+   # git config --global --get http.proxy # get proxy setting
+   # git config --global --unset http.proxy # unset proxy setting
    git config --global http.proxy http://172.16.8.250:3128
    git config --global core.autocrlf false #Leave all line-ending business to the user
    #+END_SRC
