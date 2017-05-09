@@ -610,12 +610,12 @@ adrci> show tracefile -rt
    #+BEGIN_SRC sh
 #From system A
 arp -a
-#nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
+#nhhrvl038 (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
 #Ping them once from System A
 ping system_b_IP
 #Again from system A
 arp -a
-nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
+nhhrvl038 (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
 ? (system_b_IP) at 00:0c:29:46:b5:55 [ether] on eth0
    #+END_SRC
 
@@ -718,3 +718,16 @@ nhhrvl038.dermalog.hh (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
    #+END_SRC
 * Debugging tools
   http://brendangregg.com/ebpf.html
+
+** Slow performance toolkit
+   Using the terminal:
+   #+BEGIN_SRC sh
+   df -h #check if disk-space is available
+   df -i #show inodes as additional information
+   free -mh #show RAM and swap
+   #+END_SRC
+
+   Using vSphere:
+   - Check the VMs "Perfomance"-Tab, the CPU and RAM specifically
+   - Check the Hypervisors "Performance"-Tab (sort by hosts and clusters)
+   - Check the used Storages for Warnings
