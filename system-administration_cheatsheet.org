@@ -63,6 +63,7 @@
     - Logrotate-configs
     - Cronjobs
     - einfach alles
+
 ** Allgemeine Organisation
    1. Morgens Mails lesen und Tickets lesen
       1. Mails vom Ticketsystem auf "gelesen" stellen um neue Updates zu erhalten
@@ -70,18 +71,5 @@
    3. Diese Aufgaben priorisieren
       - Dadurch fühle ich mich beim abarbeiten besser solange ich mich an die festgelegten
         Prioritäten halte
-
-* Slow performance toolkit
-  Using the terminal:
-  #+BEGIN_SRC sh
-  df -h #check if disk-space is available
-  df -i #show inodes as additional information
-  free -mh #show RAM and swap
-  #+END_SRC
-
-  Using vSphere:
-  - Check the VMs "Perfomance"-Tab, the CPU and RAM specifically
-  - Check the Hypervisors "Performance"-Tab (sort by hosts and clusters)
-  - Check the used Storages for Warnings
 
 * TODO Translate this to english
