@@ -362,36 +362,28 @@ adrci> show tracefile -rt
    :END:
    The error message:
    #+BEGIN_SRC sh
-   # happens after installing git using the normal ubuntu repositories
-   apt-get install git
-   # git clone https://tfs.somesite.com
-   error: gnutls_handshake() failed: A TLS packet with unexpected length was received. while accessing https://tfs.somesite.com
+     # happens after installing git using the normal ubuntu repositories
+     apt-get install git
+     git clone https://tfs.somesite.com
+     error: gnutls_handshake() failed: A TLS packet with unexpected length was received. while accessing https://tfs.somesite.com
    #+END_SRC
 
-   Fix on ubuntu (1/2) (should work unattended):
-   #+BEGIN_SRC sh :results raw drawer
-   # public key errors might occur, therefor we nee refreshen our key-db with the following 2 commands
-   apt-key update
-   apt-get update
-   # remove git
-   apt-get remove git -y
-   apt-get install build-essential fakeroot dpkg-dev -y
-   mkdir -p ~/git-openssl
-   cd ~/git-openssl
-   apt-get source git
-   apt-get build-dep git -y
-   apt-get install libcurl4-openssl-dev -y
-   #dpkg-source -x git_*.dsc
-   #+END_SRC
-
-   Fix on ubuntu (2/2) (requires manual file editing):
-   #+BEGIN_SRC sh :results raw drawer
-   cd ~/git-openssl/git*
-   # edit debian/control file and replace all instances of “libcurl4-gnutls-dev” with “libcurl4-openssl-dev” (I used sudo vim debian/control) using vim: :%s/libcurl4-gnutls-dev/libcurl4-openssl-dev/gc
-   # remove the line TEST=test from the file debian/rules or it will take AGES to compile (I used sudo vim debian/rules to edit the file)
-   # can i remove the ASCII generation, too? i dont need these docs
-   dpkg-buildpackage -rfakeroot -b
-   sudo dpkg -i ../git_*_amd64.deb
+   #+BEGIN_SRC sh :results drawer
+     sudo apt-get remove git
+     sudo apt-get install dpkg-dev
+     # download everything to get ready to compile
+     mkdir ~/git-openssl
+     cd ~/git-openssl
+     sudo apt-get source git
+     sudo apt-get build-dep git
+     sudo apt-get install libcurl4-openssl-dev
+     sudo dpkg-source -x git_1.7.9.5-1.dsc
+     cd git_1.7.9.5
+     vim debian/control # replace all instances of “libcurl4-gnutls-dev” with “libcurl4-openssl-dev” (I used sudo vim debian/control) using vim: :%s/libcurl4-gnutls-dev/libcurl4-openssl-dev/gc
+     sudo dpkg-buildpackage -rfakeroot -uc -b
+     # if it's faling on test, you can remove the line TEST=test from the file debian/rules (I used sudo vim debian/rules to edit the file)
+     sudo dpkg -i ../git_1.7.9.5-1_amd64.deb
+     sudo apt-mark hold git # makes it so git doesn't get overwritten by updates
    #+END_SRC
 
 * Mailing
