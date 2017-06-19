@@ -489,6 +489,8 @@ adrci> show tracefile -rt
       - "t" to change the partitinos system ID, in this case "1" will be set automatically
       - Hex Code: 8e for Linux LVM
       - "w" to write the changes and exit
+      - *Alternatively* you can also use cfdisk, for me cfdisk was able to create a proper partition
+        while fdisk couldnt
    5) Check on those changes by firing um fdisk again
       #+BEGIN_SRC sh
       fdisk -l
@@ -506,10 +508,10 @@ adrci> show tracefile -rt
         # alternatively:
         lvextend -l +100%FREE -n <volumepath>
         #+END_SRC
-      - For extX file systems fire up the following:
-        #+BEGIN_SRC sh
-        resize2fs <volumepath>
-        #+END_SRC
+   8) Extend the filesystem. For extX file systems fire up the following:
+      #+BEGIN_SRC sh
+      resize2fs <volumepath>
+      #+END_SRC
 
 ** Eth0 configuration after vmware clone
    vim /etc/udev/rules.d/70-persistent-net.rules
