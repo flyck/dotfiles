@@ -68,26 +68,27 @@
 
 * Vim
 ** General commands
- | Command        | Description                                                  |
- |----------------+--------------------------------------------------------------|
- | hjkl           | use these to move                                            |
- | x              | delete character at point                                    |
- | A              | enter insert mode after current line                         |
- | C-c            | exit insert-mode                                             |
- | :e filename    | edit another file                                            |
- | gf             | open file at point                                           |
- | zz             | center the screen                                            |
- | S-zz           | save file and exit                                           |
- | :%s/foo/gar/gc | replace every foo with bar in current file with confirmation |
- | C-F            | page down                                                    |
- | C-B            | page up                                                      |
- |----------------+--------------------------------------------------------------|
- | C-w v          | split the window vertically                                  |
- | C-w s          | split the window horizontically                              |
- | C-w q          | close the current window                                     |
- | C-w C-w        | jump to next window                                          |
- | C-w arrow      | jump to window in arrow-direction                            |
- |----------------+--------------------------------------------------------------|
+ | Command                      | Description                                                  |
+ |------------------------------+--------------------------------------------------------------|
+ | hjkl                         | use these to move                                            |
+ | x                            | delete character at point                                    |
+ | A                            | enter insert mode after current line                         |
+ | C-c                          | exit insert-mode                                             |
+ | :e filename                  | edit another file                                            |
+ | gf                           | open file at point                                           |
+ | zz                           | center the screen                                            |
+ | S-zz                         | save file and exit                                           |
+ | :%s/foo/gar/gc               | replace every foo with bar in current file with confirmation |
+ | C-F                          | page down                                                    |
+ | C-B                          | page up                                                      |
+ | :match Todo _/regexp of word/_ | highlight a specific word                                    |
+ |------------------------------+--------------------------------------------------------------|
+ | C-w v                        | split the window vertically                                  |
+ | C-w s                        | split the window horizontically                              |
+ | C-w q                        | close the current window                                     |
+ | C-w C-w                      | jump to next window                                          |
+ | C-w arrow                    | jump to window in arrow-direction                            |
+ |------------------------------+--------------------------------------------------------------|
 
 ** Commands defined in my .vimrc
  | Command | Description                           |
@@ -102,6 +103,7 @@
      3. move to the end of the intended selection
      4. S-I # C-c
      5. Give it a second
+
 ** Cheatsheets
    - http://www.lagmonster.org/docs/vi2.html
    - http://zzapper.co.uk/vimtips.html
