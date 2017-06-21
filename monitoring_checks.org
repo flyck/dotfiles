@@ -1,0 +1,103 @@
+#+Title:  Monitoring Checks
+#+Author: Felix Brilej
+#+Date:   <2016-02-19 Fr>
+
+* Monitoring Plugins auf dem Host-System
+  Die Monitoring Plugins können oft über das Paketmanagementsystem installiert werden
+  #+BEGIN_SRC sh
+    yum install nagios-plugins-all
+  #+END_SRC
+
+  Um nrpe checks auführen zu können braucht man zusätzlich noch das folgende Paket
+  #+BEGIN_SRC sh
+    yum install nagios-plugins-nrpe
+  #+END_SRC
+
+* NRPE über xinetd auf Client einrichten
+  Die Pakete nrpe, nagios-plugins-nrpe und nagios-plugins-all installieren
+  #+BEGIN_SRC sh :results silent
+    yum install -y nrpe nagios-plugins-nrpe nagios-plugins-all xinetd
+  #+END_SRC
+
+
+  Die folgende Datei in ~/etc/xinetd.d/nrpe~ kopieren:
+  #+BEGIN_SRC sh
+    cat << EOF > /etc/xinetd.d/nrpe
+    # default: off
+    # description: NRPE (Nagios Remote Plugin Executor)
+    service nrpe
+    {
+            flags           = REUSE
+            socket_type     = stream
+            type            = UNLISTED
+            port            = 5666
+            wait            = no
+            user            = nagios
+            group           = nagios
+            server          = /usr/sbin/nrpe
+            server_args     = -c /etc/nagios/nrpe.cfg --inetd
+            log_on_failure  += USERID
+            disable         = no
+            only_from       = 127.0.0.1 monitoring-server
+    }
+    EOF
+  #+END_SRC
+
+  Anschließend xinetd neustarten
+  #+BEGIN_SRC sh
+  service xinetd restart
+  #+END_SRC
+
+  Die checks unter /etc/nagios/nrpe.cfg an das System anpassen. Hierfür können die
+  Monitoring-Checks aus dem deployment-Repository unter ~monitoring/checks~ genommen werden, hier
+  befinden sich checks die sich als besonders nützlich erwiesen haben oder die auch selber gecoded
+  wurden
+  #+BEGIN_SRC sh
+  ls checks/
+  #+END_SRC
+
+  #+RESULTS:
+  | check_dermalog_license |
+  | check_exit_status      |
+  | check_oracle_health    |
+  | check_p2000_api        |
+  | check_wfe_queue        |
+  | negate                 |
+  | urlize                 |
+  | utils.pm               |
+  | utils.sh               |
+
+
+  Lokale Erreichbarkeit prüfen
+  #+BEGIN_SRC sh
+  /usr/lib64/nagios/plugins/check_nrpe -H localhost -c check_disk
+  # Bei einem ssl-handshake error nochmal so probieren
+  /usr/lib64/nagios/plugins/check_nrpe -H 127.0.0.1 -c check_disk
+  #+END_SRC
+
+** Add iptables exception
+   Kommt man per telnet auf den Port 22 aber der Port 5666 meldet "no route to host" mag eine
+   iptables-Regel davorliegen.
+
+   Iptables checken:
+   #+BEGIN_SRC sh
+   iptables --list
+   #+END_SRC
+
+   #+RESULTS:
+   | Chain  | INPUT   | (policy | ACCEPT) |             |
+   | target | prot    | opt     | source  | destination |
+   |        |         |         |         |             |
+   | Chain  | FORWARD | (policy | ACCEPT) |             |
+   | target | prot    | opt     | source  | destination |
+   |        |         |         |         |             |
+   | Chain  | OUTPUT  | (policy | ACCEPT) |             |
+   | target | prot    | opt     | source  | destination |
+
+   Auf Centos 7:
+   #+BEGIN_SRC sh
+   iptables -A INPUT -s monitoring-server -p tcp -m tcp --dport 5666 -m state --state NEW,ESTABLISHED -j ACCEPT
+   yum install iptables-services
+   service iptables reload
+   #+END_SRC
+.
