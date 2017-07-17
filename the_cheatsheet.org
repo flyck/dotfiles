@@ -25,46 +25,57 @@
    | C-a \     | exit screen     |
 
 * Emacs
-** Commands
-   | Command           | Description                                  |
-   |-------------------+----------------------------------------------|
-   | M-S-;             | Toggle comment                               |
-   | C-x h             | mark buffer                                  |
-   | M-h               | mark paragraph                               |
-   | C-c C-x C-d       | Show timers behind tasks (org-clock-display) |
-   | M-x rename-buffer | rename buffer, useful for similar files      |
-   |-------------------+----------------------------------------------|
-   | org-agenda        |                                              |
-   |-------------------+----------------------------------------------|
-   | b                 | switch to previous week                      |
-   | b                 | switch to next week                          |
-   | C a L             | Show scheduled tasks                         |
-   | C a n             | Show scheduled, then unscheduled tasks       |
-   |-------------------+----------------------------------------------|
+** Key Bindings
+   | Key Bindings       | Purpose                                            |
+   |--------------------+----------------------------------------------------|
+   | M-S-;              | Toggle comment                                     |
+   | M-h                | mark paragraph                                     |
+   | C-c C-x C-d        | Show timers behind tasks (org-clock-display)       |
+   | M-x rename-buffer  | rename buffer, useful for similar files            |
+   |--------------------+----------------------------------------------------|
+   | C-M-f              | Move forward by s-expression                       |
+   | C-M-b              | Move backward by s-expression                      |
+   | C-M-k              | Kill s-expression                                  |
+   | C-M-d              | Move down into a list                              |
+   | C-M-u              | Move up out of a list                              |
+   | C-M-n              | Move forward to the next list                      |
+   | C-M-p              | Move backward to the previous list                 |
+   | M-a                | Move to beginning of sentence                      |
+   | M-e                | Move to end of sentence                            |
+   |--------------------+----------------------------------------------------|
+   | org-agenda         |                                                    |
+   |--------------------+----------------------------------------------------|
+   | b                  | switch to previous week                            |
+   | b                  | switch to next week                                |
+   | C a L              | Show scheduled tasks                               |
+   | C a n              | Show scheduled, then unscheduled tasks             |
+   |--------------------+----------------------------------------------------|
+   | M-x subword-mode   | Minor mode that treats CamelCase as distinct words |
+   | M-x superword-mode | Minor mode that treats snake_case as one word      |
 
 ** List of tips
-   | Tips                                                                  |
-   |-----------------------------------------------------------------------|
-   | Org-mode                                                              |
-   |-----------------------------------------------------------------------|
-   | write in the past, makes more sense to other people who read it later |
-   |-----------------------------------------------------------------------|
-   | Execute ~org-lint~ for debugging of source-blocks.                      |
-   | Helpful when exporting produces errors.                               |
-   |-----------------------------------------------------------------------|
-   | Startup visibility for one headline:                                  |
-   | :Properties:                                                          |
-   | :Visibility: children (content/all)                                   |
-   | :End:                                                                 |
-   |-----------------------------------------------------------------------|
-   | To set file-specific source-block settings put this to the top:       |
-   | #+PROPERTY:   header-args :eval never-export                          |
-   |-----------------------------------------------------------------------|
-   | cua-mode                                                              |
-   |-----------------------------------------------------------------------|
-   | 1. Activate cua-mode                                                  |
-   | 2. Move point to beginning of rect and press c-ret                    |
-   | 3. Move point to end of rect and press M-i                            |
+   | Tips                                                                    |
+   |-------------------------------------------------------------------------|
+   | Org-mode                                                                |
+   |-------------------------------------------------------------------------|
+   | write in the past tense, makes more sense to someone who reads it later |
+   |-------------------------------------------------------------------------|
+   | Execute ~org-lint~ for debugging of source-blocks.                        |
+   | This is helpful when exporting produces errors.                         |
+   |-------------------------------------------------------------------------|
+   | Startup visibility for one headline:                                    |
+   | :Properties:                                                            |
+   | :Visibility: children (content/all)                                     |
+   | :End:                                                                   |
+   |-------------------------------------------------------------------------|
+   | To set file-specific source-block settings put this to the top:         |
+   | #+PROPERTY:   header-args :eval never-export                            |
+   |-------------------------------------------------------------------------|
+   | cua-mode                                                                |
+   |-------------------------------------------------------------------------|
+   | 1. Activate cua-mode                                                    |
+   | 2. Move point to beginning of rect and press c-ret                      |
+   | 3. Move point to end of rect and press M-i                              |
 
 * Vim
 ** General commands
