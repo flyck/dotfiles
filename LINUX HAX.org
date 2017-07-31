@@ -13,12 +13,16 @@
     This couldn't be confirmed by my colleagues :/
   - Check if the logfile is readable if you get no feedback at all
 * Oracle Linux
+  In Oracle Linux most of the host-related config can be changed in =/etc/sysconfig/=
+
 ** Change the hostname
    Edit the following files:
    - /etc/sysconfig/network
    - /etc/hosts
+
 ** Change keyboard layout
    Change good looking entries in /etc/sysconfig/keyboard from "en" into “de”
+
 ** Add a repository
    For CentOS and Red Hat Enterprise Linux 6.x:
    #+BEGIN_SRC sh
@@ -42,32 +46,27 @@
 
 ** Add epel repository
    Taken from: http://www.tecmint.com/how-to-enable-epel-repository-for-rhel-centos-6-5/
-   At work we use Oracle Linux 6.7, so the following is of importance
+   At work we use Oracle Linux 6.7, so the following is useful
    #+BEGIN_SRC sh
 ## RHEL/CentOS 6 32-Bit ##
-# wget http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
-# rpm -ivh epel-release-6-8.noarch.rpm
+wget http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+rpm -ivh epel-release-6-8.noarch.rpm
 ## RHEL/CentOS 6 64-Bit ##
-# wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-# rpm -ivh epel-release-6-8.noarch.rpm
+wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+rpm -ivh epel-release-6-8.noarch.rpm
    #+END_SRC
 
 * Ubuntu
-  Move windows: control-windows arrow
-  Ubuntu repository direction: /etc/apt/sources.list
+  _Hint for desktop-versions:_
+  - Move windows: control-windows arrow
+  - Ubuntu repository direction: /etc/apt/sources.list
 
-  Ubuntu enable root login
-  #+BEGIN_SRC sh
-  sudo passwd root
-  sudo passwd -u root
-  #+END_SRC
-
-** Change hostname 								     :Ubuntu:
+** Change hostname                                            :Ubuntu:
    Change these files:
    - /etc/hosts (fqdn, then shorthostname, seperated via tab)
    - /etc/hostname (short hostname)
 
-** chkconfig 									     :Ubuntu:
+** chkconfig                                                  :Ubuntu:
    #+BEGIN_SRC sh
    #equivalents to these:
    chkconfig --add <service> chkconfig --level 345 <service> on
@@ -77,7 +76,7 @@
    update-rc.d -f <service> remove
    #+END_SRC
 
-** /boot Partition full 							     :Ubuntu:
+** /boot Partition full                                       :Ubuntu:
    fire this up multiple times
    #+BEGIN_SRC sh
    sudo apt-get autoremove
@@ -120,7 +119,7 @@
    #+END_SRC
 
 ** Basics nrpe setup using xinetd
-*** Requirements on the monitoring-host
+*** Setup on monitoring-server
     Required for the localhost template to work that comes with the icinga installation
     #+BEGIN_SRC sh
       yum install nagios-plugins-all
@@ -131,7 +130,7 @@
       yum install nagios-plugins-nrpe
     #+END_SRC
 
-*** Requirements on each client
+*** Setup on each client
     Install these packages. Nagios-plugins-all is an overkill, but it is really small so its okay.
     #+BEGIN_SRC sh :results silent
       yum install -y nrpe nagios-plugins-nrpe nagios-plugins-all xinetd
@@ -171,7 +170,6 @@
     /usr/lib64/nagios/plugins/check_nrpe -H localhost -c check_disk
     /usr/lib64/nagios/plugins/check_nrpe -H 127.0.0.1 -c check_disk #alternative for ssl handshake error
     #+END_SRC
-
 
 **** Add iptables exception
      If a connection using telnet on port 22 is possible, but port 5666 shows "no route to host"
@@ -241,12 +239,12 @@ adrci> show tracefile -rt
    #+END_SRC
 
 * Package management
-** RPM
-   Differences in software architectures:
-   - x86-64: Initial description for 64-bit architecture
-   - amd64 : x86-64 for amd or intel processors (basically just a new name for the same thing)
-   - i386  : 32 bit architecture
+  _Differences in software architectures:_
+  - x86-64: Initial description for 64-bit architecture
+  - amd64 : x86-64 for amd or intel processors (basically just a new name for the same thing)
+  - i386  : 32 bit architecture
 
+** RPM
    Some usefull hacks
    #+BEGIN_SRC sh
    #Check whether a folder belongs to a package
@@ -260,15 +258,18 @@ adrci> show tracefile -rt
    #Update a package with a new rpm in the current directory
    rpm -U local_upgrade.rpm
    #+END_SRC
+
 ** Apt
+
 *** Hold back packages, to prevent updates
-    For me this was useful to prevent apt from overwriting me self-compiled git.
+    For me this was useful to prevent apt from overwriting my self-compiled git.
     #+BEGIN_SRC sh
     sudo apt-mark hold <package>
     sudo apt-mark showhold
     #+END_SRC
 
 ** Yum
+
 *** Only download packages via yum
     #+BEGIN_SRC sh
     yum install yum-downloadonly
@@ -288,7 +289,7 @@ adrci> show tracefile -rt
    Proxy for git
    #+BEGIN_SRC sh
    git config --global http.proxy http://172.16.8.250:3128; git config --global https.proxy  http://172.16.8.250:3128
-   git config --global http.proxy ""; git config --global https.proxy  ""
+   git config --global --unset http.proxy; git config --global --unset https.proxy
    #+END_SRC
 
    Proxy for bash
@@ -305,9 +306,6 @@ adrci> show tracefile -rt
    #+BEGIN_SRC sh
    git config --global user.name "username"
    git config --global user.email mailaddress
-   # git config --global --get http.proxy # get proxy setting
-   # git config --global --unset http.proxy # unset proxy setting
-   git config --global http.proxy http://172.16.8.250:3128
    git config --global core.autocrlf false #Leave all line-ending business to the user
    #+END_SRC
 
@@ -464,7 +462,7 @@ adrci> show tracefile -rt
    tail /var/log/audit/audit.log
    # audit2allow tool is part of the following package (turns audit logs to allow-policies):
    yum install setroubleshoot
-   # loglevel erhöhen:
+   # increase loglevel:
    semodule -DB
    #+END_SRC
 
@@ -527,12 +525,12 @@ adrci> show tracefile -rt
   Handy tool to analyze full disks: ncdu
 ** /bin/bash
 *** ls
-    Nur die Dateigröße mit Dateinamen anzeigen
+    Only display the filesize and filename
     #+BEGIN_SRC sh
     ls -lh | awk '{print $5 "\t" $9}'
     #+END_SRC
 
-*** Colors
+*** Bash colortable
     Black       0;30     Dark Gray     1;30
     Blue        0;34     Light Blue    1;34
     Green       0;32     Light Green   1;32
@@ -543,7 +541,7 @@ adrci> show tracefile -rt
     Light Gray  0;37     White         1;37
 
 *** Colorful motd (in red)
-    Andere motds kommen aus ~/etc/update-motd/~
+    In ubuntu other motds may come from ~/etc/update-motd/~
     #+BEGIN_SRC sh
     echo -en "\033[1;34m" > /etc/motd
     echo "Text of your motd file....." >> /etc/motd
@@ -569,6 +567,7 @@ adrci> show tracefile -rt
     firefox &
     firefox #now press C-z
     #+END_SRC
+
 ** Change a network config safely
    Use the "at"-tool to reset the config after 5 minutes (at-jobs).
    Useful for ipconfig or firewall config-changes to ensure connectivity.
@@ -577,39 +576,35 @@ adrci> show tracefile -rt
    #+BEGIN_SRC sh
    cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
    #+END_SRC
+
 ** Copy files between systems (rsync)
    more useful examples: http://www.tecmint.com/rsync-local-remote-file-synchronization-commands/
 
    #+BEGIN_SRC sh
-   rsync -avz ursprung root@192.168.0.1:/ziel/
+   rsync -avz source root@192.168.0.1:/destination/
    #+END_SRC
 
 ** Cronjobs
-   Achtung! Cronjobs starten jede Minute neu und senden entsprechende report-Mails an verschiedene
-   User sollte es bei der Ausführung einen Fehler gegeben haben
+   Warning! Cronjobs may restart every minute and as a side effect send report-mails if an error occurs.
 
-   Logging anschalten:
+   Sample cronjob:
    #+BEGIN_SRC sh
    59 23 * * * /home/john/bin/backup.sh > /home/john/logs/backup.log 2>&1
    #+END_SRC
 
-** Debugging of Binaries
-   To debug binaries that misbehave and dont give obvious logs try the following:
-   - Look in the system messages log (/var/log/messages)
-   - Use strace and look out for file permission errors which might cause the binary to stop
-     #+BEGIN_SRC sh
-     strace -pid <PID> -f
-     #+END_SRC
-   - Debug the binary with gdb (u are going pretty deep in here)
 ** Filter a log-file for errors / warnings
+   #+BEGIN_SRC sh
    grep -iE "(warning|error|critical)" /var/log/fetchmail.log
+   # -i flag to ignore the case
+   # -E flag to enable regular expressions
+   #+END_SRC
 
 ** Find out Mac-Address for a different System
    Prerequesite: Have another system in the same subnet (we call it System A)
    #+BEGIN_SRC sh
 #From system A
 arp -a
-#nhhrvl038 (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
+nhhrvl038 (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
 #Ping them once from System A
 ping system_b_IP
 #Again from system A
@@ -632,6 +627,7 @@ nhhrvl038 (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
    $c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes");
    $c->commit'
    #+END_SRC
+
 ** Logrotate
    Example from AGerler:
    #+BEGIN_SRC sh
@@ -652,15 +648,6 @@ nhhrvl038 (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
    - compress: whether the log file should be zipped or not
    - delaycompress: the log only gets zipped after the rotation has been completed (file-handle reasons)
 
-** Monitor a process that times out
-   #+BEGIN_SRC sh
-   strace -f pid-file (child-threads followen) (not confirmed)
-   #+END_SRC
-   Short of that, you can always look in the process init script. For instance, the SSH daemon is
-   started with the script in /etc/init.d/sshd. Sometimes the PID will be defined there (search
-   for pid, PID, PIDFILE, PID_FILE, etc.).  For anything that sources /etc/init.d/functions, the
-   PID will live in /var/run/*.pid.
-
 ** Shrink a logfile
    Reduce a logfile to its last 200 lines while preserving the access rights.
    #+BEGIN_SRC sh
@@ -680,11 +667,11 @@ nhhrvl038 (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
 
    Look at the processes behind them (actually active ports):
    #+BEGIN_SRC sh
-   # Use a grep filter here because you will be getting way too much
+   # Use a grep filter here because you will be getting way too much info
    netstat -tapen | grep
    #+END_SRC
 
-** Rename filenames to be more convenient
+** Rename filenames coming from Windows users
    Lowercase filenames
    #+BEGIN_SRC sh
    for i in *; do mv $i `echo $i | tr [:upper:] [:lower:]`; done
@@ -713,8 +700,12 @@ nhhrvl038 (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
 
 ** Unpack a .tar.gz file
    #+BEGIN_SRC sh
-   tar -xvzf datei.tar.gz #(-x extract, -v verbose output, -f file to be unpacked, -z erst gzip, dann tar)
+   tar -xzf datei.tar.gz
    #+END_SRC
+   - -x extract
+   - -f file to be unpacked
+   - -z first gzip, then tar
+
 * Debugging tools
   http://brendangregg.com/ebpf.html
 
@@ -730,3 +721,20 @@ nhhrvl038 (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
    - Check the VMs "Perfomance"-Tab, the CPU and RAM specifically
    - Check the Hypervisors "Performance"-Tab (sort by hosts and clusters)
    - Check the used Storages for Warnings
+** Debugging of Binaries
+   To debug binaries that misbehave and dont give obvious logs try the following:
+   - Look in the system messages log (/var/log/messages)
+   - Use strace and look out for file permission errors which might cause the binary to stop
+     #+BEGIN_SRC sh
+     strace -pid <PID> -f
+     #+END_SRC
+   - Debug the binary with gdb (u are going pretty deep in here)
+
+** Monitor a process that times out
+   #+BEGIN_SRC sh
+   strace -f pid-file (child-threads followen) (not confirmed)
+   #+END_SRC
+   Short of that, you can always look in the process init script. For instance, the SSH daemon is
+   started with the script in /etc/init.d/sshd. Sometimes the PID will be defined there (search
+   for pid, PID, PIDFILE, PID_FILE, etc.).  For anything that sources /etc/init.d/functions, the
+   PID will live in /var/run/*.pid.
