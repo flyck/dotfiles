@@ -194,7 +194,11 @@
    #+BEGIN_SRC sh
    service mysqld stop
    /usr/bin/mysqld start --skip-grant-tables -user=root
-   mysql -u root > UPDATE mysql.user SET Password=PASSWORD('newpwd') WHERE User='root'; mysql > FLUSH PRIVILEGES;
+   # mysqld_safe --skip-grant-tables & # alternatively
+   mysql -u root
+   # mysql # alternatively
+   UPDATE mysql.user SET Password=PASSWORD('newpwd') WHERE User='root';
+   FLUSH PRIVILEGES;
    #+END_SRC
 
    What to do when your mysql wont start generally
@@ -284,6 +288,7 @@ adrci> show tracefile -rt
    Proxy for git
    #+BEGIN_SRC sh
    git config --global http.proxy http://172.16.8.250:3128; git config --global https.proxy  http://172.16.8.250:3128
+   git config --global http.proxy ""; git config --global https.proxy  ""
    #+END_SRC
 
    Proxy for bash
