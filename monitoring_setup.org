@@ -153,7 +153,7 @@
     # Move on to install the icingaweb2 module
     cd /usr/share/icingaweb2/modules
     git clone https://github.com/Icinga/icingaweb2-module-pnp pnp
-    # navigate to the icingaweb2 module configuration: http://10.120.38.92/icingaweb2/config/modules
+    # navigate to the icingaweb2 module configuration: http://<ip-addr>/icingaweb2/config/modules
     # enable the pnp module
     # click on the "config"-tab and change the pnp4nagios configuration variable
     # before:
