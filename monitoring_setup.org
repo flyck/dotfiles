@@ -1,0 +1,165 @@
+#+Title:  Icinga2 Installation notes
+#+Author: Felix Brilej
+
+* General information
+  - Prerequisite: Working package manager with epel repository included
+  - Operating System: Oracle Linux Server release 7.4
+  - Date of installation: <2017-08-16 Mi>
+  - Software Versions of important packages:
+    - Icinga2: 2.7.0-1.el7.icinga
+    - Icingaweb2: 2.4.1-1.el7.centos
+    - Mysql: mysql-community-common-5.6.37-2.el7.x86_64
+
+* Icinga2 and Icingaweb2
+  Install icinga2
+  #+BEGIN_SRC sh
+    # get the repository
+    yum install https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.rpm
+    # install the package
+    yum install icinga2 icinga2-ido-mysql
+    # add icinga2 to autostart
+    systemctl enable icinga2.service
+    # install the checks
+    yum install nagios-plugins-all
+    # enable the command feature so we can use "check now" later in icingaweb2
+    icinga2 feature enable command
+  #+END_SRC
+
+  Install and setup mysql-server (following:
+  https://www.linode.com/docs/databases/mysql/how-to-install-mysql-on-centos-7). There might be
+  easier solutions, but in my case the simple installation of maria-db was not possible.
+  #+BEGIN_SRC sh
+    wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+    rpm -ivh mysql-community-release-el7-5.noarch.rpm
+    yum update
+    yum install mysql-server
+  #+END_SRC
+
+  Configure the mysql-server
+  #+BEGIN_SRC sh
+    systemctl start mysqld
+    # set the password and do some cleanup
+    mysql_secure_installation
+    # login
+    mysql -uroot -p
+    # within the mysql shell enter the following:
+    CREATE DATABASE icingaweb2;
+    GRANT ALL ON icingaweb2.* TO icingaweb2@localhost IDENTIFIED BY 'CHANGEME';
+    CREATE DATABASE icinga;
+    GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE VIEW, INDEX, EXECUTE ON icinga.* TO 'icinga'@'localhost' IDENTIFIED BY 'CHANGEME';
+    exit
+    # populate the icinga database
+    mysql -u root -p icinga < /usr/share/icinga2-ido-mysql/schema/mysql.sql
+    # make sure the feature is enabled and restart icinga2
+    icinga2 feature enable ido-mysql
+    systemctl restart icinga2.service
+  #+END_SRC
+
+  Install icingaweb2
+  #+BEGIN_SRC sh
+    # install the package
+    yum install icingaweb2
+    # add httpd to autostart
+    systemctl enable httpd.service
+    # start the services
+    systemctl start icinga2.service
+    systemctl start httpd.service
+    # edit php.ini to set the timezone
+    vim /etc/php.ini
+    date.timezone = EU/Berlin
+    # navigate to http://<ip-addr>/icingaweb2/setup and follow the instructions...
+    # validate the created groups:
+    cat /etc/group | grep icinga
+    # we dont have the icingacli available, therefor we chose the second option
+    # preparation for the next command
+    chsh -s /bin/bash apache
+    su apache -c "mkdir -m 2770 /etc/icingaweb2; chgrp icingaweb2 /etc/icingaweb2; head -c 12 /dev/urandom | base64 | tee /etc/icingaweb2/setup.token; chmod 0660 /etc/icingaweb2/setup.token;";
+    # enter the token in the webinterface and proceed
+    # enable the monitoring plugin and proceed
+    # resolve the displayed conflicts:
+    systemctl reload httpd.service #fixes the php timezone error
+    # install the missing package, reload and proceed
+    yum install php-mysql
+    systemctl reload httpd.service
+    # Enter the database information (here the useres are stored), validate and proceed
+    # port: 3306
+    # database name: icingaweb2
+    # username: icingaweb2
+    # password CHANGEME
+    # persistent: yes
+    # Proceed again, the name is fine
+    # Enter your user information and proceed, i propose icingaadmin / icingaadmin
+    # Proceed
+    # Look at the setting-overview and proceed
+    # Leave the defaults and proceed
+    # Enter the Monitoring IDO Resource information and proceed
+    # port: 3306
+    # database name: icinga
+    # username: icinga
+    # password: CHANGEME
+    # persisten: yes
+    # Look at the command transport defaults and proceed
+    # Look at the monitoring security setting and proceed
+    # Look at the setting-overview and proceed
+  #+END_SRC
+
+  We are now done with this part and can login using icingaadmin / icingaadmin.
+
+  We are greeted with a warning message, belonging to the local "http" check.  I propose to
+  resolve this first error like this:
+  #+BEGIN_SRC sh
+    touch /var/www/html/index.html
+  #+END_SRC
+
+* Install pnp4nagios
+  #+BEGIN_SRC sh
+    # make sure the perfdata feature is enabled
+    icinga2 feature enable perfdata
+    systemctl restart icinga2.service
+    # install the prerequesites
+    yum install rrdtool rrdtool-perl
+    # download pnp4nagios from here: https://sourceforge.net/projects/pnp4nagios/files/latest/download
+    tar -xzf pnp4nagios-0.6.25.tar.gz
+    cd pnp4nagios-0.6.25/
+    ./configure --with-nagios-user=icinga --with-nagios-group=icinga
+    make all
+    make fullinstall
+    # disable the installation file and link in the web directory
+    mv /usr/local/pnp4nagios/share/install.php /usr/local/pnp4nagios/share/install.php.ignore
+    ln -s /usr/local/pnp4nagios/ /var/www/html/pnp4nagios
+    # adapt perfdata_spool_dir in /usr/local/pnp4nagios/etc/npcd.cfg
+    vim /usr/local/pnp4nagios/etc/npcd.cfg
+    # Before:
+    perfdata_spool_dir = /usr/local/pnp4nagios/var/spool
+    # After:
+    perfdata_spool_dir = /var/spool/icinga2/perfdata
+    # restart the service so the changes take effect
+    service npcd restart
+    # add the npcd service to autostart
+    chkconfig npcd on
+    # change the authentication settings in pnp4nagios.conf
+    vim /etc/httpd/conf.d/pnp4nagios.conf
+    # Before:
+            AuthName "Nagios Access"
+            AuthType Basic
+            AuthUserFile /usr/local/nagios/etc/htpasswd.users
+            Require valid-user
+    # Now
+            Satisfy Any
+            Allow from all
+    # Restart httpd
+    systemctl reload httpd.service
+    # Verify that we see a graph and no error message at http://<ip-addr>/pnp4nagios
+    # Move on to install the icingaweb2 module
+    cd /usr/share/icingaweb2/modules
+    git clone https://github.com/Icinga/icingaweb2-module-pnp pnp
+    # navigate to the icingaweb2 module configuration: http://10.120.38.92/icingaweb2/config/modules
+    # enable the pnp module
+    # click on the "config"-tab and change the pnp4nagios configuration variable
+    # before:
+    /etc/pnp4nagios
+    # after:
+    /usr/local/pnp4nagios/etc
+    # Click "save changes" and navigate to the local disk service
+    # Below the plugin output there is now a row showing small, clickable previews of the pnp4nagios graph
+  #+END_SRC
