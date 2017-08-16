@@ -218,6 +218,13 @@ rpm -ivh epel-release-6-8.noarch.rpm
 
 * Oracle
 
+** Add Epel repository
+   #+BEGIN_SRC sh
+wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+rpm -ivh epel-release-latest-7.noarch.rpm
+yum update
+   #+END_SRC
+
 ** Free up disk-space
    Source: https://uhesse.com/2011/06/01/adrci-a-survival-guide-for-the-dba/
 
@@ -301,6 +308,42 @@ adrci> show tracefile -rt
    #+END_SRC
 
 * Git
+** Manual isntallation
+   Git 2.x Installation on Linux (taken from here: https://oracle-base.com/articles/linux/git-2-installation-on-linux)
+
+   The version of Git available from the Yum repositories is
+   typically quite old. This article describes the manual installation of Git 2.x on Linux. The
+   same method should work for all the RHEL clones (Oracle Linux, CentOS) and Fedora.
+
+   Install the prerequisite packages and remove the any current Git installation.
+   #+BEGIN_SRC sh
+yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel -y
+yum install gcc perl-ExtUtils-MakeMaker -y
+yum remove git -y
+   #+END_SRC
+
+   Download the latest Git installation from kernel.org and unpack it.
+   #+BEGIN_SRC sh
+cd /usr/src
+wget https://www.kernel.org/pub/software/scm/git/git-2.2.2.tar.gz
+tar xzf git-2.2.2.tar.gz
+   #+END_SRC
+
+   Install it.
+   #+BEGIN_SRC sh
+cd git-2.2.2
+make prefix=/usr/local/git all
+make prefix=/usr/local/git install
+echo "export PATH=$PATH:/usr/local/git/bin" >> /etc/bashrc
+source /etc/bashrc
+
+   #+END_SRC
+
+   Test it, by checking the version.
+   #+BEGIN_SRC sh
+git --version
+   #+END_SRC
+
 ** Initial Settings
    Set General information required by git
    #+BEGIN_SRC sh
