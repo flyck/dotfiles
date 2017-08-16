@@ -33,11 +33,20 @@
     rpm -ivh mysql-community-release-el7-5.noarch.rpm
     yum update
     yum install mysql-server
+    systemctl enable mysqld
+    systemctl start mysqld
+  #+END_SRC
+
+  Alternatively install maria-db
+  #+BEGIN_SRC sh
+  yum install mariadb-server mariadb
+  # If this conflicts use: "yum remove mysql-*" to get rid of unnessicary mysql packages
+  systemctl enable mariadb
+  systemctl start mariadb
   #+END_SRC
 
   Configure the mysql-server
   #+BEGIN_SRC sh
-    systemctl start mysqld
     # set the password and do some cleanup
     mysql_secure_installation
     # login
