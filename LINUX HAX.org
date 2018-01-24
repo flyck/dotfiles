@@ -785,18 +785,31 @@ nhhrvl038 (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
 * Debugging tools
   http://brendangregg.com/ebpf.html
 
-** Slow performance toolkit
+** Commands helpful for performance analysis
    Using the terminal:
    #+BEGIN_SRC sh
-   df -h #check if disk-space is available
-   df -i #show inodes as additional information
-   free -mh #show RAM and swap
+df -h #check if disk-space is available
+df -i #show inodes as additional information
+free -mh #show RAM and swap
+lscpu  # Show CPU information (number of cores, etc.)
+mytop -u root --prompt # current mysql performance, inklusive Sessions:
+vmstat 2 10 # Gives hints about CPU and memory during execution of performance-impaired process
+iostat -xk 2 12 # Gives hints about I/O during execution of performance-impaired process
+cat /proc/meminfo # Infos about processes in general
+htop # Which processes take the most storage? Careful, green means actual space, yellow means provisioned
    #+END_SRC
 
    Using vSphere:
    - Check the VMs "Perfomance"-Tab, the CPU and RAM specifically
    - Check the Hypervisors "Performance"-Tab (sort by hosts and clusters)
    - Check the used Storages for Warnings
+
+   A big tool which does it all (but may be complicated to use):
+   #+BEGIN_SRC sh
+sar
+ksar # graphical interface
+   #+END_SRC
+
 ** Debugging of Binaries
    To debug binaries that misbehave and dont give obvious logs try the following:
    - Look in the system messages log (/var/log/messages)
