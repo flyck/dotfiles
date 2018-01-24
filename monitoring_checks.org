@@ -16,36 +16,37 @@
 * NRPE über xinetd auf Client einrichten
   Die Pakete nrpe, nagios-plugins-nrpe und nagios-plugins-all installieren
   #+BEGIN_SRC sh :results silent
-    yum install -y nrpe nagios-plugins-nrpe nagios-plugins-all xinetd
+yum install -y nrpe nagios-plugins-nrpe nagios-plugins-all xinetd
   #+END_SRC
 
 
   Die folgende Datei in ~/etc/xinetd.d/nrpe~ kopieren:
   #+BEGIN_SRC sh
-    cat << EOF > /etc/xinetd.d/nrpe
-    # default: off
-    # description: NRPE (Nagios Remote Plugin Executor)
-    service nrpe
-    {
-            flags           = REUSE
-            socket_type     = stream
-            type            = UNLISTED
-            port            = 5666
-            wait            = no
-            user            = nagios
-            group           = nagios
-            server          = /usr/sbin/nrpe
-            server_args     = -c /etc/nagios/nrpe.cfg --inetd
-            log_on_failure  += USERID
-            disable         = no
-            only_from       = 127.0.0.1 monitoring-server
-    }
-    EOF
+cat << EOF > /etc/xinetd.d/nrpe
+# default: off
+# description: NRPE (Nagios Remote Plugin Executor)
+service nrpe
+{
+        flags           = REUSE
+        socket_type     = stream
+        type            = UNLISTED
+        port            = 5666
+        wait            = no
+        user            = nagios
+        group           = nagios
+        server          = /usr/sbin/nrpe
+        server_args     = -c /etc/nagios/nrpe.cfg --inetd
+        log_on_failure  += USERID
+        disable         = no
+        only_from       = 127.0.0.1 localhost monitoring-server
+}
+EOF
   #+END_SRC
 
-  Anschließend xinetd neustarten
+  Anschließend xinetd neustarten und zum Autostart hinzufügen
   #+BEGIN_SRC sh
-  service xinetd restart
+chkconfig xinetd on
+service xinetd restart
   #+END_SRC
 
   Die checks unter /etc/nagios/nrpe.cfg an das System anpassen. Hierfür können die
@@ -70,9 +71,12 @@
 
   Lokale Erreichbarkeit prüfen
   #+BEGIN_SRC sh
-  /usr/lib64/nagios/plugins/check_nrpe -H localhost -c check_disk
-  # Bei einem ssl-handshake error nochmal so probieren
-  /usr/lib64/nagios/plugins/check_nrpe -H 127.0.0.1 -c check_disk
+/usr/lib64/nagios/plugins/check_nrpe -H localhost -c check_users
+# Bei einem ssl-handshake error nochmal so probieren
+/usr/lib64/nagios/plugins/check_nrpe -H 127.0.0.1 -c check_users
+
+# Alternativ falls der Pfad zu check_nrpe nicht klar ist:
+$(find / -name check_nrpe 2>/dev/null | head -n 1) -H localhost -c check_users
   #+END_SRC
 
 ** Add iptables exception
