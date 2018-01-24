@@ -118,6 +118,12 @@ rpm -ivh epel-release-6-8.noarch.rpm
    /dev/sda1                             497M  168M  330M  34% /boot
    #+END_SRC
 
+** Configuration tips
+   Get more information on config reload errors:
+   #+BEGIN_SRC sh
+   /usr/lib/icinga2/safe-reload /etc/sysconfig/icinga2
+   #+END_SRC
+
 ** Basics nrpe setup using xinetd
 *** Setup on monitoring-server
     Required for the localhost template to work that comes with the icinga installation
@@ -216,13 +222,17 @@ rpm -ivh epel-release-6-8.noarch.rpm
    select * from testtable where id=1\G --display columns nicely; for tables with many columns
    #+END_SRC
 
-* Oracle
+* Oracle Enterprise Linux OREL
 
 ** Add Epel repository
    #+BEGIN_SRC sh
-wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-rpm -ivh epel-release-latest-7.noarch.rpm
-yum update
+   yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+   yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+   #+END_SRC
+
+   Then check whether it's enabled
+   #+BEGIN_SRC sh
+   yum repolist
    #+END_SRC
 
 ** Free up disk-space
@@ -308,7 +318,7 @@ adrci> show tracefile -rt
    #+END_SRC
 
 * Git
-** Manual isntallation
+** Manual installation
    Git 2.x Installation on Linux (taken from here: https://oracle-base.com/articles/linux/git-2-installation-on-linux)
 
    The version of Git available from the Yum repositories is
@@ -627,6 +637,9 @@ git --version
    rsync -avz source root@192.168.0.1:/destination/
    #+END_SRC
 
+** Good ASCII Art generators
+   - http://my.asciiart.club/
+
 ** Cronjobs
    Warning! Cronjobs may restart every minute and as a side effect send report-mails if an error occurs.
 
@@ -634,6 +647,24 @@ git --version
    #+BEGIN_SRC sh
    59 23 * * * /home/john/bin/backup.sh > /home/john/logs/backup.log 2>&1
    #+END_SRC
+
+** Process substitution
+   The normal way:
+   #+BEGIN_SRC sh
+   curl http://somesite/file1 > file1
+   curl http://somesite/file2 > file2
+   diff file1 file2
+   #+END_SRC
+
+   Using process substitution we can have this way faster:
+   #+BEGIN_SRC sh
+   diff <(curl http://somesite/file1) <(curl http://somesite/file2)
+   #+END_SRC
+
+   Process substitution gives you similar capabilities to piping. Except piping only allows you to
+   pipe the output from a single command into another. In the diff scenario, we need to pipe the
+   output from mutltiple commands into another. And that's what process substitution allows us to
+   do.
 
 ** Filter a log-file for errors / warnings
    #+BEGIN_SRC sh
@@ -661,6 +692,8 @@ nhhrvl038 (10.120.38.254) at 00:24:a8:68:c3:00 [ether] on eth0
    find -type f -exec sed -i -e 's/sqlplus/sqlplus64/g' {} \;
    #search for string in current directory
    grep -R 'string' dir/
+   # fill in a specific configuration:
+   sudo -E sed -i -e "s/password_secret =.*/password_secret = $(pwgen -s 128 1)/" /etc/graylog/server/server.conf
    #+END_SRC
 
 ** Install cpan modules with dependencies
