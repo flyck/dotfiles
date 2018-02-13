@@ -11,7 +11,8 @@
   - Check your firewall
   - Do you use sudo and therefor have different runtime variables (or a different environment)?
     This couldn't be confirmed by my colleagues :/
-  - Check if the logfile is readable if you get no feedback at all
+  - Check the logfile file permissions if no log-messages show up
+
 * Oracle Linux
   In Oracle Linux most of the host-related config can be changed in =/etc/sysconfig/=
 
@@ -21,52 +22,18 @@
    - /etc/hosts
 
 ** Change keyboard layout
-   Change good looking entries in /etc/sysconfig/keyboard from "en" into “de”
-
-** Add a repository
-   For CentOS and Red Hat Enterprise Linux 6.x:
-   #+BEGIN_SRC sh
-   #Centos extras repository (contains for example nrpe checks)
-   sudo wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
-   sudo rpm -Uvh epel-release-latest-6*.rpm
-   #+END_SRC
-
-   For Oracle Linux 6.x:
-   #+BEGIN_SRC sh
-   cd /etc/yum.repos.d/
-   wget http://public-yum.oracle.com/public-yum-ol6.repo
-   #+END_SRC
-
-   If this shows: "Error: Cannot retrieve metalink for repository: epel. Please verify its path and try again"
-   Maybe it is because of old certificates. An alternative would be to use repositorise with only
-   http and not https. However, sticking with https, try:
-   #+BEGIN_SRC sh
-   yum --disablerepo=epel -y update  ca-certificates
-   #+END_SRC
-
-** Add epel repository
-   Taken from: http://www.tecmint.com/how-to-enable-epel-repository-for-rhel-centos-6-5/
-   At work we use Oracle Linux 6.7, so the following is useful
-   #+BEGIN_SRC sh
-## RHEL/CentOS 6 32-Bit ##
-wget http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
-rpm -ivh epel-release-6-8.noarch.rpm
-## RHEL/CentOS 6 64-Bit ##
-wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-rpm -ivh epel-release-6-8.noarch.rpm
-   #+END_SRC
+   Change suspicious-looking entries in /etc/sysconfig/keyboard from "en" into “de”
 
 * Ubuntu
-  _Hint for desktop-versions:_
+  _Hint for the desktop:_
   - Move windows: control-windows arrow
-  - Ubuntu repository direction: /etc/apt/sources.list
 
 ** Change hostname                                            :Ubuntu:
    Change these files:
    - /etc/hosts (fqdn, then shorthostname, seperated via tab)
    - /etc/hostname (short hostname)
 
-** chkconfig                                                  :Ubuntu:
+** chkconfig (autostart configuration)                        :Ubuntu:
    #+BEGIN_SRC sh
    #equivalents to these:
    chkconfig --add <service> chkconfig --level 345 <service> on
@@ -76,105 +43,99 @@ rpm -ivh epel-release-6-8.noarch.rpm
    update-rc.d -f <service> remove
    #+END_SRC
 
-** /boot Partition full                                       :Ubuntu:
-   fire this up multiple times
-   #+BEGIN_SRC sh
-   sudo apt-get autoremove
-   #+END_SRC
-
 * Icinga Monitoring
   Nrpe Tipps:
   - https://docs.icinga.com/latest/de/nrpe.html#icingaserverdefinitions
 
-** Check multiple disks at once
+** Check multiple disks in one service
    This assumes an nrpe setup is already at place and only this check has to be added.
    It also requires the file check_multi at ~/usr/lib64/nagios/plugins/~ with execute permissions.
    - Download it here: https://github.com/flackem/check_multi (?)
 
    #+BEGIN_SRC sh
-   # check if multiple disks are attached at all
-   df -h # df -l if df -h doesnt respond
-   # check if check_multi config file exists
-   cat /etc/nagios/check_multi_disk.cmd
-   # make sure this exists in /etc/nagios/nrpe.cfg:
-   command[check_disk]=/usr/lib64/nagios/plugins/check_multi -f /etc/nagios/check_multi_disk.cmd -r 32
-   # check the command locally:
-   /usr/lib64/nagios/plugins/check_nrpe -H localhost -c check_disk
-   /usr/lib64/nagios/plugins/check_nrpe -H 127.0.0.1 -c check_disk #alternative for ssl handshake error
+# check if multiple disks are attached at all
+df -h # df -l if df -h doesnt respond
+# check if check_multi config file exists
+cat /etc/nagios/check_multi_disk.cmd
+# make sure this exists in /etc/nagios/nrpe.cfg:
+command[check_disk]=/usr/lib64/nagios/plugins/check_multi -f /etc/nagios/check_multi_disk.cmd -r 32
+# check the command locally:
+/usr/lib64/nagios/plugins/check_nrpe -H localhost -c check_disk
+/usr/lib64/nagios/plugins/check_nrpe -H 127.0.0.1 -c check_disk #alternative for ssl handshake error
    #+END_SRC
 
    Example content of /etc/nagios/check_multi_disk.cmd
    #+BEGIN_SRC sh
-   command[disk1]=/usr/lib64/nagios/plugins/check_disk -w 20% -c 10% -p /
-   command[disk2]=/usr/lib64/nagios/plugins/check_disk -w 20% -c 10% -p /home
-   command[disk3]=/usr/lib64/nagios/plugins/check_disk -w 20% -c 10% -p /boot
+command[disk1]=/usr/lib64/nagios/plugins/check_disk -w 20% -c 10% -p /
+command[disk2]=/usr/lib64/nagios/plugins/check_disk -w 20% -c 10% -p /home
+command[disk3]=/usr/lib64/nagios/plugins/check_disk -w 20% -c 10% -p /boot
    #+END_SRC
 
    What to check? Basically everything that starts with /dev:
    #+BEGIN_SRC sh
-   [root@somehost-blade1 ~]# df -h | grep ^/dev
-   /dev/mapper/ol_somehost--blade1-root   50G  6.9G   44G  14% /
-   /dev/mapper/ol_nhhbc015--blade1-home  225G   94M  225G   1% /home
-   /dev/sda1                             497M  168M  330M  34% /boot
+[root@somehost-blade1 ~]# df -h | grep ^/dev
+/dev/mapper/ol_somehost--blade1-root   50G  6.9G   44G  14% /
+/dev/mapper/ol_nhhbc015--blade1-home  225G   94M  225G   1% /home
+/dev/sda1                             497M  168M  330M  34% /boot
    #+END_SRC
 
-** Configuration tips
+** Debugging tips
    Get more information on config reload errors:
    #+BEGIN_SRC sh
    /usr/lib/icinga2/safe-reload /etc/sysconfig/icinga2
    #+END_SRC
 
-** Basics nrpe setup using xinetd
+** Basic nrpe setup ontop of xinetd
 *** Setup on monitoring-server
     Required for the localhost template to work that comes with the icinga installation
     #+BEGIN_SRC sh
-      yum install nagios-plugins-all
+yum install nagios-plugins-all
     #+END_SRC
 
     In order to trigger remote nagios-plugins this package is necessary
     #+BEGIN_SRC sh
-      yum install nagios-plugins-nrpe
+yum install nagios-plugins-nrpe
     #+END_SRC
 
 *** Setup on each client
     Install these packages. Nagios-plugins-all is an overkill, but it is really small so its okay.
     #+BEGIN_SRC sh :results silent
-      yum install -y nrpe nagios-plugins-nrpe nagios-plugins-all xinetd
+yum install -y nrpe nagios-plugins-nrpe nagios-plugins-all xinetd
     #+END_SRC
 
     ~/etc/xinetd.d/nrpe~ has to exist in a specific way:
     #+BEGIN_SRC sh
-      cat << EOF > /etc/xinetd.d/nrpe
-      # default: off
-      # description: NRPE (Nagios Remote Plugin Executor)
-      service nrpe
-      {
-              flags           = REUSE
-              socket_type     = stream
-              type            = UNLISTED
-              port            = 5666
-              wait            = no
-              user            = nagios
-              group           = nagios
-              server          = /usr/sbin/nrpe
-              server_args     = -c /etc/nagios/nrpe.cfg --inetd
-              log_on_failure  += USERID
-              disable         = no
-              only_from       = 127.0.0.1 monitoring-server
-      }
-      EOF
+cat << EOF > /etc/xinetd.d/nrpe
+# default: off
+# description: NRPE (Nagios Remote Plugin Executor)
+service nrpe
+{
+        flags           = REUSE
+        socket_type     = stream
+        type            = UNLISTED
+        port            = 5666
+        wait            = no
+        user            = nagios
+        group           = nagios
+        server          = /usr/sbin/nrpe
+        server_args     = -c /etc/nagios/nrpe.cfg --inetd
+        log_on_failure  += USERID
+        disable         = no
+        only_from       = 127.0.0.1 monitoring-server
+}
+EOF
     #+END_SRC
 
     Restarting xinetd is required
     #+BEGIN_SRC sh :results drawer
-    chkconfig xinetd on
-    service xinetd restart
+chkconfig xinetd on
+service xinetd restart
     #+END_SRC
 
     Check if the setup works locally
     #+BEGIN_SRC sh
-    /usr/lib64/nagios/plugins/check_nrpe -H localhost -c check_disk
-    /usr/lib64/nagios/plugins/check_nrpe -H 127.0.0.1 -c check_disk #alternative for ssl handshake error
+/usr/lib64/nagios/plugins/check_nrpe -H localhost -c check_disk
+/usr/lib64/nagios/plugins/check_nrpe -H 127.0.0.1 -c check_disk #alternative for ssl handshake error
     #+END_SRC
 
 **** Add iptables exception
@@ -264,16 +225,16 @@ adrci> show tracefile -rt
 ** RPM
    Some usefull hacks
    #+BEGIN_SRC sh
-   #Check whether a folder belongs to a package
-   rpm -q -whatprovides /etc/profile
-   #List all installed packages
-   rpm -qa | less
-   #Search for a specific package
-   rpm -qa | grep -i name
-   #Uninstall a package
-   rpm -e name
-   #Update a package with a new rpm in the current directory
-   rpm -U local_upgrade.rpm
+#Check whether a folder belongs to a package
+rpm -q -whatprovides /etc/profile
+#List all installed packages
+rpm -qa | less
+#Search for a specific package
+rpm -qa | grep -i name
+#Uninstall a package
+rpm -e name
+#Update a package with a new rpm in the current directory
+rpm -U local_upgrade.rpm
    #+END_SRC
 
 ** Apt
@@ -285,7 +246,41 @@ adrci> show tracefile -rt
     sudo apt-mark showhold
     #+END_SRC
 
+*** /boot Partition full
+    fire this up multiple times
+    #+BEGIN_SRC sh
+   sudo apt-get autoremove
+    #+END_SRC
+
 ** Yum
+
+*** Add a repository to yum
+    For CentOS and Red Hat Enterprise Linux 6.x:
+    #+BEGIN_SRC sh
+# Centos extras repository (contains for example nrpe checks)
+sudo wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+sudo rpm -Uvh epel-release-latest-6*.rpm
+# RHEL/CentOS 6 32-Bit
+wget http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+rpm -ivh epel-release-6-8.noarch.rpm
+# RHEL/CentOS 6 64-Bit
+wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+rpm -ivh epel-release-6-8.noarch.rpm
+    #+END_SRC
+
+    Alternatively you can just grab the .repo configration file
+    #+BEGIN_SRC sh
+# For Oracle Linux 6.x:
+cd /etc/yum.repos.d/
+wget http://public-yum.oracle.com/public-yum-ol6.repo
+    #+END_SRC
+
+    If this shows: "Error: Cannot retrieve metalink for repository: epel. Please verify its path and try again"
+    Maybe it is because of old certificates. An alternative would be to use repositorise with only
+    http and not https. However, sticking with https, try:
+    #+BEGIN_SRC sh
+   yum --disablerepo=epel -y update  ca-certificates
+    #+END_SRC
 
 *** Only download packages via yum
     #+BEGIN_SRC sh
