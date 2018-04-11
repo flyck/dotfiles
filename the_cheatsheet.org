@@ -77,6 +77,20 @@
    | 2. Move point to beginning of rect and press c-ret                      |
    | 3. Move point to end of rect and press M-i                              |
 
+** tramp
+   C-x C-f /sudo::/etc/fstab
+   C-x C-f /sudo::user@server
+
+   C-x C-f /sudo:ssh-host:file-on-ssh-host
+   C-x C-f /ssh:localhost#4000|ssh:10.2.2.4|ssh:10.5.5.5:/etc/nagiosconfigbuilder.yml
+   C-x C-f /ssh:10.2.2.4|sudo:root@10.2.2.4:/etc/hosts
+
+   eshell:
+
+   =cd /ssh:user@fqdn:~=
+   =cd /ssh:ubu12\|sudo:ubu12:/etc/=
+   =apt-cache policy > #<buffer apt-policy>
+
 * Vim
 ** General commands
  | Command                      | Description                                                  |
