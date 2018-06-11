@@ -31,6 +31,7 @@
    | M-S-;              | Toggle comment                                     |
    | M-h                | mark paragraph                                     |
    | C-c C-x C-d        | Show timers behind tasks (org-clock-display)       |
+   | C-x =              | Display cursor position and character info         |
    | M-x rename-buffer  | rename buffer, useful for similar files            |
    |--------------------+----------------------------------------------------|
    | C-M-f              | Move forward by s-expression                       |
