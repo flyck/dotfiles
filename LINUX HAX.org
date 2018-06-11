@@ -154,6 +154,32 @@ service xinetd restart
      service iptables reload
      #+END_SRC
 
+* SQLite
+  There are a few steps to see the tables in an SQLite database:
+
+  Connect to the db
+  #+BEGIN_SRC sh
+sqlite3 grafana.db # assumes grafana.db exists in current directory
+  #+END_SRC
+
+  Query the db
+  #+BEGIN_SRC sh
+# List the tables in your database:
+.tables
+
+# List how the table looks:
+.schema tablename
+
+# Print the entire table:
+SELECT * FROM tablename;
+
+# List all of the available SQLite prompt commands:
+.help
+
+# Close sqlite
+.exit
+  #+END_SRC
+
 * MySQL
    What to do when you cant start mysql as root (maybe not exactly right)
    #+BEGIN_SRC sh
@@ -401,6 +427,19 @@ git --version
    #+END_SRC
    The subproject will now contain the git history which touches dirB.
 
+** Show tags and their type
+   Taken from:
+   https://stackoverflow.com/questions/40479712/how-can-i-tell-if-a-given-git-tag-is-annotated-or-lightweight/40480534
+   #+BEGIN_SRC sh
+git show-ref -d --tags       |
+cut -b 42-                   | # to remove the commit-id
+sort                         |
+sed 's/\^{}//'               | # remove ^{} markings
+uniq -c                      | # count identical lines
+sed 's/2\ refs\/tags\// a /' | # 2 identicals = annotated
+sed 's/1\ refs\/tags\//lw /'
+   #+END_SRC
+
 ** Fix: Local SSL issuer certificate error
    Alternative: install that ssl certificate, probably the more advanced solution
    #+BEGIN_SRC sh
@@ -624,6 +663,14 @@ git --version
    #+BEGIN_SRC sh
    cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
    #+END_SRC
+
+** Check the privileges of a user
+   List the privileges like this:
+   #+BEGIN_SRC sh
+sudo -l -U myuser
+   #+END_SRC
+
+   How to read the syntax: http://toroid.org/sudoers-syntax
 
 ** Copy files between systems (rsync)
    more useful examples: http://www.tecmint.com/rsync-local-remote-file-synchronization-commands/
