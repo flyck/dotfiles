@@ -440,6 +440,15 @@ sed 's/2\ refs\/tags\// a /' | # 2 identicals = annotated
 sed 's/1\ refs\/tags\//lw /'
    #+END_SRC
 
+** Remote branches vs local branches
+   https://git-scm.com/book/en/v2/Git-Branching-Remote-Branches
+
+   A command which gets me out of "detached HEAD" error message and properly connects local and
+   remote branch:
+   #+BEGIN_SRC sh
+git checkout -b my-crazy-feature origin/feature/my-crazy-feature
+   #+END_SRC
+
 ** Fix: Local SSL issuer certificate error
    Alternative: install that ssl certificate, probably the more advanced solution
    #+BEGIN_SRC sh
@@ -664,7 +673,7 @@ sed 's/1\ refs\/tags\//lw /'
    cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
    #+END_SRC
 
-** Check the privileges of a user
+** Check the privileges or permissions of a user
    List the privileges like this:
    #+BEGIN_SRC sh
 sudo -l -U myuser

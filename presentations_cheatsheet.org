@@ -22,6 +22,9 @@
   - Have in mind which topics would be "advanced" and which ones would be considered "basic", this
     gives you the ability to cut off topics after the basics are done when you run out of time
 
+  Style:
+  - Those presentations are great where you can see that the presenter is interested in the topic
+
 * The Introduction
   - Talk about the pursued outcome of the talk, should be up to three bullet points using easy
     language
