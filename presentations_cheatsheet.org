@@ -15,15 +15,23 @@
     - Cut off a topic at a certain point once the bulletpoints are done
 
 * Slides
-  Style:
+  Style of the slides:
   - Up to 5 bullet points per slide at best
 
   Content:
   - Have in mind which topics would be "advanced" and which ones would be considered "basic", this
     gives you the ability to cut off topics after the basics are done when you run out of time
+  - Talk about what people are actually interested in
+    - Developers: Interested in IDE features and development workflows from initial design phase
+      to end.
+    - New features or ideas: If you're talking to people who are already in the field they will
+      know their way around. What excites them will be something which is actually new and which
+      they can show off to somebody else possibly. Doing just a basic fundamentals course can be
+      very boring.
 
-  Style:
-  - Those presentations are great where you can see that the presenter is interested in the topic
+  Style of presenting:
+  - Those presentations are great where you can see that the presenter is actually interested in
+    the topic. His excitement becomes your excitement.
 
 * The Introduction
   - Talk about the pursued outcome of the talk, should be up to three bullet points using easy
