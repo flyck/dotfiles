@@ -209,6 +209,11 @@ SELECT * FROM tablename;
    select * from testtable where id=1\G --display columns nicely; for tables with many columns
    #+END_SRC
 
+** Mysql 5.7.5 or lower
+   #+BEGIN_SRC sql
+   SET PASSWORD FOR 'user-name-here'@'hostname' = PASSWORD('new-password');
+   #+END_SRC
+
 * Oracle Enterprise Linux OREL
 
 ** Add Epel repository
