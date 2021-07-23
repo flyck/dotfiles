@@ -454,6 +454,14 @@ sed 's/1\ refs\/tags\//lw /'
 git checkout -b my-crazy-feature origin/feature/my-crazy-feature
    #+END_SRC
 
+
+   How to fetch all remote branches:
+   #+BEGIN_SRC sh
+git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
+git fetch --all --tags
+git pull --all
+   #+END_SRC
+
 ** Fix: Local SSL issuer certificate error
    Alternative: install that ssl certificate, probably the more advanced solution
    #+BEGIN_SRC sh
