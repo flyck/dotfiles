@@ -107,4 +107,7 @@ alias ll="ls -lah"
 
 eval "$(fnm env --use-on-cd)"
 
+# fancy-pants terminal prompt
+eval "$(starship init zsh)"
+
 alias pn=pnpm
