@@ -344,6 +344,21 @@ wget http://public-yum.oracle.com/public-yum-ol6.repo
    #+END_SRC
 
 * Git
+** Cleanup
+#+begin_src sh
+#cleanup all branches which were merged
+git branch --merged | egrep -v "(^\*|master|main|dev)" | xargs git branch -d
+
+# remove remote tracking branches
+git remote prune origin
+#+end_src
+** Author fix
+Here's how to do it with rebase and keep both the commit date and the author date:
+
+#+begin_src sh
+git -c rebase.instructionFormat='%s%nexec GIT_COMMITTER_DATE="%cD" GIT_AUTHOR_DATE="%aD" git commit --amend --no-edit --reset-author' rebase -f <commit/branch before wrong author and email, or --root to rebase all>
+#+end_src
+
 ** Manual installation
    Git 2.x Installation on Linux (taken from here: https://oracle-base.com/articles/linux/git-2-installation-on-linux)
 
