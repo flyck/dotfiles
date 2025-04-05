@@ -43,6 +43,14 @@
    update-rc.d -f <service> remove
    #+END_SRC
 
+** Gnome Terminal
+   The other options can be easily changed in the terminal, but the tab shifting needs to be
+   configured like so:
+#+begin_src sh
+gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ next-tab '<Primary>Tab'
+gsettings set org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/ prev-tab '<Primary><Shift>Tab'
+#+end_src
+
 * Icinga Monitoring
   Nrpe Tipps:
   - https://docs.icinga.com/latest/de/nrpe.html#icingaserverdefinitions
