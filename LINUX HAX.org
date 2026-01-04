@@ -406,8 +406,8 @@ git --version
 ** Initial Settings
    Set General information required by git
    #+BEGIN_SRC sh
-   git config --global user.name "username"
-   git config --global user.email mailaddress
+   git config --global user.name "flyck"
+   git config --global user.email "felix.brilej@googlemail.com"
    git config --global core.autocrlf false #Leave all line-ending business to the user
    #+END_SRC
 
@@ -484,6 +484,12 @@ git branch -r | grep -v '\->' | while read remote; do git branch --track "${remo
 git fetch --all --tags
 git pull --all
    #+END_SRC
+
+** Count Contributions
+   Counts the contributions in local branches
+#+begin_src sh
+git log --shortstat --pretty="%cE" | sed 's/\(.*\)@.*/\1/' | grep -v "^$" | awk 'BEGIN { line=""; } !/^ / { if (line=="" || !match(line, $0)) {line = $0 "," line }} /^ / { print line " # " $0; line=""}' | sort | sed -E 's/# //;s/ files? changed,//;s/([0-9]+) ([0-9]+ deletion)/\1 0 insertions\(+\), \2/;s/\(\+\)$/\(\+\), 0 deletions\(-\)/;s/insertions?\(\+\), //;s/ deletions?\(-\)//' | awk 'BEGIN {name=""; files=0; insertions=0; deletions=0;} {if ($1 != name && name != "") { print name ": " files " files changed, " insertions " insertions(+), " deletions " deletions(-), " insertions-deletions " net"; files=0; insertions=0; deletions=0; name=$1; } name=$1; files+=$2; insertions+=$3; deletions+=$4} END {print name ": " files " files changed, " insertions " insertions(+), " deletions " deletions(-), " insertions-deletions " net";}'
+#+end_src
 
 ** Fix: Local SSL issuer certificate error
    Alternative: install that ssl certificate, probably the more advanced solution
