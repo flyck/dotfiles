@@ -1,3 +1,6 @@
+# Arch Linux / Omarchy environment initialization
+. "$HOME/.local/share/../bin/env"
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 export PATH="/opt/homebrew/bin:$PATH"
