@@ -7,7 +7,7 @@ if [[ "$1" == "open" ]]; then
 fi
 
 # Checks if an external monitor is connected
-if hyprctl monitors | grep -q 'DP-1'; then
+if hyprctl monitors | grep -q '^Monitor DP-1'; then
     if [[ "$1" == "close" ]]; then
         # Disable laptop screen when lid is closed
         hyprctl keyword monitor "eDP-1, disable"
