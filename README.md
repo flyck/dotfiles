@@ -18,8 +18,14 @@ cd ~/git/dotfiles
 # Install a config package (creates symlinks)
 stow zsh
 
-# Install multiple packages
-stow zsh screen hypr
+# Specify target directory explicitly (useful if not in parent of home)
+stow -t ~ hypr
+
+# Install multiple packages at once
+stow zsh screen hypr vim
+
+# Install all available configs
+stow */
 
 # Remove a config (deletes symlinks)
 stow -D zsh
@@ -27,3 +33,31 @@ stow -D zsh
 # Reinstall (useful after updating files)
 stow -R zsh
 ```
+
+## Important Notes
+
+**Before stowing:** GNU Stow will fail if files already exist at the target location and aren't symlinks. You have two options:
+
+1. **Backup and remove existing configs** (recommended):
+   ```bash
+   # Backup your current config
+   mv ~/.config/hypr ~/.config/hypr.backup.$(date +%s)
+
+   # Then stow
+   stow hypr
+   ```
+
+2. **Use --adopt to merge** (use with caution):
+   ```bash
+   # This will move existing files into your dotfiles repo
+   stow --adopt hypr
+
+   # Review changes with git diff, then either commit or revert
+   git diff
+   ```
+
+**Hyprland verification and reload:**
+- Verify your config before applying: `Hyprland --verify-config`
+- Hyprland automatically reloads when config files change
+- Manual reload: `hyprctl reload`
+- After stowing hypr configs, run `hyprctl reload` to apply changes
